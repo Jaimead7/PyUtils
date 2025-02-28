@@ -22,5 +22,9 @@ def debug(msg: str, style: Styles = Styles.ENDC) -> None:
         msg (str): Messge to display.
         style (Styles, optional): Color of the message. Defaults to Styles.ENDC.
     """
-    if (cfg.app.debug):
+    try:
+        debug = bool(cfg.app.debug)
+    except AttributeError:
+        debug = True
+    if (debug):
         print(f'{style}{datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
