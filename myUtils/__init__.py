@@ -1,4 +1,5 @@
-from .src.config import APPLICATIONPATH, ConfigFileManager, cfg
+from .src.config import (APPLICATIONPATH, CONFIGPATH, DISTPATH,
+                         ConfigFileManager, cfg)
 from .src.debug import Styles, debug
 from .src.Immutable import Immutable
 from .src.noInstantiable import NoInstantiable

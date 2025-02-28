@@ -9,7 +9,7 @@ if getattr(sys, 'frozen', False):
     APPLICATIONPATH: str = path.abspath(path.join(path.dirname(sys.executable),'..'))
 elif __file__:
     testPath: str = path.abspath(str(Path(__file__).parents[3]))
-    if testPath[10:] == 'submodules':
+    if testPath[-10:] == 'submodules':
         APPLICATIONPATH = path.abspath(str(Path(__file__).parents[5]))
     else:
         APPLICATIONPATH = path.abspath(str(Path(__file__).parents[2]))
