@@ -3,7 +3,7 @@
 Different utilities for general purpose usage on python projects.  
 
 ## Authors
-> Jaime Álvarez Díaz  
+> Jaime Alvarez Diaz  
 > [![email](https://img.shields.io/static/v1.svg?label=Gmail&message=alvarez.diaz.jaime1@gmail.com&logo=gmail&color=08851b&logoColor=white&colorA=c71610)](mailto:alvarez.diaz.jaime1@gmail.com)  
 [![GitHub Profile](https://img.shields.io/static/v1.svg?label=GitHub&message=Jaimead7&logo=github&color=2dba4e&colorA=2b3137)](https://github.com/Jaimead7)  
 
