@@ -1,3 +1,3 @@
-from ..src.debug import Styles, debug
+from ..src.logs import *
 
 ...
