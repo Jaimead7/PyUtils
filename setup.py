@@ -18,20 +18,19 @@ setup(
     name= myUtilsConfig['app']['name'],
     version= myUtilsConfig['app']['version'],
     description= 'Different utilities for general purpose usage on python projects.',
-    package_dir={'': 'app'},
-    packages= find_packages(where= 'app'),
     long_description= longDescription,
     long_description_content_type= 'text/markdown',
-    url= 'https://github.com/Jaimead7/MyUtils',
     author= 'Jaimead7',
     author_email= 'alvarez.dia.jaime1@gmail.com',
-    license= 'MIT',
+    url= 'https://github.com/Jaimead7/MyUtils',
+    packages= find_packages(),
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.10',
     ],
+    license= 'MIT',
     install_requires= ['tomli >= 2.2.1',],
-    extra_require= {
+    extras_require= {
         'dev': [
             'pytest',
         ],

@@ -19,7 +19,10 @@ class Styles:
     GREEN = '\033[92m'
 
 def _getLoggingLevel() -> int:
-    return logging.__dict__[cfg.app.loggingLevel.upper()]
+    try:
+        return logging.__dict__[cfg.app.loggingLevel.upper()]
+    except KeyError:
+        return logging.DEBUG
 
 def setLoggingLevel(lvl: int = _getLoggingLevel()) -> int:
     logging.getLogger().setLevel(lvl)

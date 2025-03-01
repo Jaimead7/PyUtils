@@ -1,3 +1,4 @@
+import inspect
 import sys
 from os import makedirs, path
 from pathlib import Path
@@ -8,13 +9,19 @@ import tomli
 if getattr(sys, 'frozen', False):
     APPLICATIONPATH: str = path.abspath(path.join(path.dirname(sys.executable),'..'))
 elif __file__:
-    testPath: str = path.abspath(str(Path(__file__).parents[3]))
-    if testPath[-10:] == 'submodules':
-        APPLICATIONPATH = path.abspath(str(Path(__file__).parents[5]))
-    else:
-        APPLICATIONPATH = path.abspath(str(Path(__file__).parents[2]))
-DISTPATH: str = path.join(APPLICATIONPATH, 'dist')
-CONFIGPATH: str = path.join(DISTPATH, 'config')
+    APPLICATIONPATH = path.abspath(str(Path(inspect.stack()[-1].filename).parents[1]))
+try:
+    makedirs(path.join(APPLICATIONPATH, 'dist'))
+except:
+    pass
+finally:
+    DISTPATH: str = path.join(APPLICATIONPATH, 'dist')
+try:
+    makedirs(path.join(DISTPATH, 'config'))
+except:
+    pass
+finally:
+    CONFIGPATH: str = path.join(DISTPATH, 'config')
 
 
 class ConfigDict(dict):
@@ -79,5 +86,6 @@ class ConfigFileManager:
                                     filePath= self._filePath)
             return result
 
-
+with open(path.join(CONFIGPATH, 'config.toml'), 'a'):
+    ...
 cfg = ConfigFileManager(path.join(CONFIGPATH, 'config.toml'))
