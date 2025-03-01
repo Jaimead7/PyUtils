@@ -1,3 +1,3 @@
-from ..src.noInstantiable import NoInstantiable
+from ..src.noInstantiable import *
 
 ...

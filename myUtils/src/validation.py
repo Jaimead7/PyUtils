@@ -3,7 +3,7 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Optional
 
-from .debug import Styles, debug
+from .logs import errorLog
 
 #from PyQt5.QtCore import QDateTime, Qt
 
@@ -36,7 +36,7 @@ class ValidationClass:
             except FrozenInstanceError:
                 object.__setattr__(self, name, method(getattr(self, name)))
             except ValueError as eMsg:
-                debug(eMsg, Styles.FAIL)
+                errorLog(eMsg)
         else:
             super().__setattr__(name, value)
 

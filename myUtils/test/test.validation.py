@@ -1,3 +1,3 @@
-from ..src.validation import ValidationClass
+from ..src.validation import *
 
 ...

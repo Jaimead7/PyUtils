@@ -1,22 +1,43 @@
+import inspect
 import sys
-from os import makedirs, path
+import warnings
+from datetime import datetime
+from os import path
 from pathlib import Path
 from typing import Any, Optional
 
 import tomli
 
+warnings.formatwarning = lambda msg, *args, **kwargs: str(msg)
+
+# PATHS
+class ProjectPathsDict(dict):
+    def __getattr__(self, name: str) -> Any:
+        try:
+            return self[name]
+        except KeyError:
+            return None
+
+    def __setitem__(self, key, value) -> None:
+        if path.exists(value):
+            return super().__setitem__(key, value)
+        warnings.formatwarning = lambda msg, *args, **kwargs: str(msg)
+        warnings.warn(f'\033[93mWARNING ---> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:\033[0m {value} is not a valid path\n')
+        return super().__setitem__(key, None)
+
+    def setAppPath(self, newAppPath: str) -> None:
+        self['APPLICATIONPATH'] = newAppPath
+        self['DISTPATH'] = path.join(self['APPLICATIONPATH'], 'dist')
+        self['CONFIGPATH'] = path.join(self['APPLICATIONPATH'], 'dist', 'config')
+        self['CONFIGFILEPATH'] = path.join(self['APPLICATIONPATH'], 'dist', 'config', 'config.toml')
+
+ppaths = ProjectPathsDict()
 if getattr(sys, 'frozen', False):
-    APPLICATIONPATH: str = path.abspath(path.join(path.dirname(sys.executable),'..'))
+    ppaths.setAppPath(path.abspath(path.join(path.dirname(sys.executable),'..')))
 elif __file__:
-    testPath: str = path.abspath(str(Path(__file__).parents[3]))
-    if testPath[-10:] == 'submodules':
-        APPLICATIONPATH = path.abspath(str(Path(__file__).parents[5]))
-    else:
-        APPLICATIONPATH = path.abspath(str(Path(__file__).parents[2]))
-DISTPATH: str = path.join(APPLICATIONPATH, 'dist')
-CONFIGPATH: str = path.join(DISTPATH, 'config')
+    ppaths.setAppPath(path.abspath(str(Path(inspect.stack()[-1].filename).parents[1])))
 
-
+# CONFIG
 class ConfigDict(dict):
     def __init__(self,
                  *args,
@@ -49,6 +70,7 @@ class ConfigDict(dict):
 
 class ConfigFileManager:
     def __init__(self, filePath: str) -> None:
+        filePath = str(filePath)
         if filePath[-5:] != '.toml':
             filePath += '.toml'
         if path.isfile(filePath):
@@ -80,4 +102,11 @@ class ConfigFileManager:
             return result
 
 
-cfg = ConfigFileManager(path.join(CONFIGPATH, 'config.toml'))
+if ppaths['CONFIGPATH'] is not None:
+    with open(ppaths['CONFIGFILEPATH'], 'a'):
+        ...
+    cfg = ConfigFileManager(ppaths['CONFIGFILEPATH'])
+else:
+    warnings.formatwarning = lambda msg, *args, **kwargs: str(msg)
+    warnings.warn(f'\033[93mWARNING ---> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:\033[0m There is no default config file\n')
+    cfg = None

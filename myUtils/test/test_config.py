@@ -1,3 +1,3 @@
-from ..src.config import ConfigManager, cfg
+from ..src.config import *
 
 ...
