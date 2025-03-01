@@ -22,11 +22,20 @@ rm -r MyUtils
 ## Usage
 
 ### Config file
-#### PATH's
+#### ProjectPathsDict
+Dict with validation for paths. On error <code>path = None</code>.  
+<code>ppath</code> is an instance of <code>ProjectPathsDict</code> containing default paths.  
 Default <code>APPLICATIONPATH</code> is <code>../\<main>.py</code> when executed <code>py \<main>.py</code>.  
 Default <code>DISTPATH</code> is <code>APPLICATIONPATH/dist</code>  
 Default <code>CONFIGPATH</code> is <code>APPLICATIONPATH/dist/config</code>  
-In order to work with the default vars config your project with the following structure.  
+
+#### ConfigFileManager
+Class to manage <code>.toml</code> files  
+<code>cfg</code> is an instance of <code>ConfigFileManager</code> for <code>APPLICATIONPATH/dist/config/config.toml</code>  
+On error <code>cfg = None</code>
+
+#### Example
+Project structure
 ```
 APPLICATIONPATH
 ├── dist
@@ -39,24 +48,43 @@ APPLICATIONPATH
 │   └── ...
 └── ...
 ```
-
-#### config.toml
-Base config file should contain <code>[app]</code> section and 
+config.toml
 ```toml
 [app]
     name = 'MyApp'
     version = '0.0.1'
     ...
 ```
+main.py
 ```python
-from MyUtils.config import APPLICATIONPATH, CONFIGPATH, DISTPATH, ConfigFileManager, cfg
+from MyUtils.config import ConfigFileManager, ProjectPathsDict, cfg, ppaths
 
-print(config.app.name)
-print(config.app.version)
+
+print(ppaths['APPLICATIONPATH'])
+print(ppaths['DISTPATH'])
+print(ppaths['CONFIGPATH'])
+print(ppaths['CONFIGFILEPATH'])
+
+print(cfg.app.name)
+print(cfg.app.version)
+
+ppaths.setAppPath(ppaths['DISTPATH'])
+print(ppaths['APPLICATIONPATH'])
+print(ppaths['DISTPATH'])
+print(ppaths['CONFIGPATH'])
+print(ppaths['CONFIGFILEPATH'])
 ```
 ```
+>> C:/.../APPLICATIONPATH
+>> C:/.../APPLICATIONPATH/dist
+>> C:/.../APPLICATIONPATH/dist/config
+>> C:/.../APPLICATIONPATH/dist/config/config.toml
 >> MyApp
 >> 0.0.1
+>> C:/.../APPLICATIONPATH/dist
+>> None
+>> None
+>> None
 ```
 
 ### Logs

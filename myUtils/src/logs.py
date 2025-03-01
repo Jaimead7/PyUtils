@@ -21,7 +21,7 @@ class Styles:
 def _getLoggingLevel() -> int:
     try:
         return logging.__dict__[cfg.app.loggingLevel.upper()]
-    except KeyError:
+    except (KeyError, AttributeError):
         return logging.DEBUG
 
 def setLoggingLevel(lvl: int = _getLoggingLevel()) -> int:

@@ -1,5 +1,4 @@
-from .src.config import (APPLICATIONPATH, CONFIGPATH, DISTPATH,
-                         ConfigFileManager, cfg)
+from .src.config import ConfigFileManager, ProjectPathsDict, cfg, ppaths
 from .src.immutable import Immutable
 from .src.logs import (Styles, criticalLog, debugLog, errorLog, infoLog,
                        setLoggingLevel, warningLog)
