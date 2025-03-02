@@ -10,29 +10,35 @@ with open("README.md", "r") as f:
 configFilePath: str = path.join(Path(__file__).parent, 'dist', 'config', 'config.toml')
 try:
     with open(configFilePath, 'rb') as f:
-        myUtilsConfig: dict = tomli.load(f)
+        myPyUtilsConfig: dict = tomli.load(f)
 except tomli.TOMLDecodeError:
     raise tomli.TOMLDecodeError(f'Error with config file')
 
+with open('requirements.txt') as f:
+    requires: list = [line.replace('\n', '')
+                      for line in f.readlines()
+                      if line != '\n']
+
 setup(
-    name= myUtilsConfig['app']['name'],
-    version= myUtilsConfig['app']['version'],
+    name= myPyUtilsConfig['app']['name'],
+    version= myPyUtilsConfig['app']['version'],
     description= 'Different utilities for general purpose usage on python projects.',
     long_description= longDescription,
     long_description_content_type= 'text/markdown',
     author= 'Jaimead7',
     author_email= 'alvarez.dia.jaime1@gmail.com',
-    url= 'https://github.com/Jaimead7/MyUtils',
+    url= 'https://github.com/Jaimead7/MyPyUtils',
     packages= find_packages(),
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.10',
     ],
     license= 'MIT',
-    install_requires= ['tomli >= 2.2.1',],
+    install_requires= requires,
     extras_require= {
         'dev': [
             'pytest',
+            'wheel'
         ],
     },
     python_requires= '>=3.10',
