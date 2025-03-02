@@ -1,10 +1,14 @@
 # MyPyUtils
 
 Different utilities for general purpose usage on python projects.  
+<br>
+[![Tests indicator](https://github.com/Jaimead7/MyPyUtils/actions/workflows/python310-lint-test.yml/badge.svg)](https://github.com/Jaimead7/MyPyUtils/actions/workflows/python310-lint-test.yml)  
+[![License](https://img.shields.io/static/v1.svg?label=LICENSE&message=MIT&color=2dba4e&colorA=2b3137)](https://github.com/Jaimead7/MyPyUtils/blob/master/LICENSE)  
+[![PyPI Latest Release](https://img.shields.io/pypi/v/MyPyUtils.svg?color=2dba4e)](https://pypi.org/project/MyPyUtils/)
 
 ## Authors
 > Jaime Alvarez Diaz  
-> [![email](https://img.shields.io/static/v1.svg?label=Gmail&message=alvarez.diaz.jaime1@gmail.com&logo=gmail&color=08851b&logoColor=white&colorA=c71610)](mailto:alvarez.diaz.jaime1@gmail.com)  
+> [![email](https://img.shields.io/static/v1.svg?label=Gmail&message=alvarez.diaz.jaime1@gmail.com&logo=gmail&color=2dba4e&logoColor=white&colorA=c71610)](mailto:alvarez.diaz.jaime1@gmail.com)  
 [![GitHub Profile](https://img.shields.io/static/v1.svg?label=GitHub&message=Jaimead7&logo=github&color=2dba4e&colorA=2b3137)](https://github.com/Jaimead7)  
 
 ## Installation
@@ -36,6 +40,3 @@ Pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
-
-## License
-[![License](https://img.shields.io/badge/MIT-2b3137)](LICENSE)  
