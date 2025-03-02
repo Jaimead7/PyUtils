@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 with open("README.md", "r") as f:
     longDescription: str = f.read()
 
-configFilePath: str = path.join(Path(__file__).parent, 'dist', 'config', 'config.toml')
+configFilePath: str = path.join(Path(__file__).parent, 'myPyUtils', 'dist', 'config', 'config.toml')
 try:
     with open(configFilePath, 'rb') as f:
         myPyUtilsConfig: dict = tomli.load(f)
@@ -29,6 +29,8 @@ setup(
     author_email= 'alvarez.dia.jaime1@gmail.com',
     url= 'https://github.com/Jaimead7/MyPyUtils',
     packages= find_packages(),
+    package_data= {'myPyUtils': ['dist/config/*.toml',]},
+    include_package_data= True,
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.10',
