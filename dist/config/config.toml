@@ -1,4 +1,4 @@
 [app]
-    name = "MyUtils"
+    name = "MyPyUtils"
     version = "0.0.4"
     loggingLevel = "Debug"  # [Debug, Info, Warning, Error, Critical]

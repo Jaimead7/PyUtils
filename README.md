@@ -1,4 +1,4 @@
-# MyUtils
+# MyPyUtils
 
 Different utilities for general purpose usage on python projects.  
 
@@ -8,15 +8,20 @@ Different utilities for general purpose usage on python projects.
 [![GitHub Profile](https://img.shields.io/static/v1.svg?label=GitHub&message=Jaimead7&logo=github&color=2dba4e&colorA=2b3137)](https://github.com/Jaimead7)  
 
 ## Installation
-Install as a package
+Install as a package from source files
 ```powershell
-git clone https://github.com/Jaimead7/MyUtils
-cd MyUtils
+git clone https://github.com/Jaimead7/MyPyUtils.git
+cd MyPyUtils
 py -m pip install wheel tomli
-py setup.py bdist_wheel sdist
-py -m pip install .
+py setup.py bdist_wheel
+py -m pip install ./dist/MyPyUtils-x.x.x-py3-none-any.whl
 cd ..
-rm -r MyUtils
+rm -r MyPyUtils
+```
+
+Install as a package from pypi (not implemented)
+```powershell
+py -m pip install MyPyUtils
 ```
 
 ## Usage
@@ -57,7 +62,7 @@ config.toml
 ```
 main.py
 ```python
-from MyUtils.config import ConfigFileManager, ProjectPathsDict, cfg, ppaths
+from MyPyUtils.config import ConfigFileManager, ProjectPathsDict, cfg, ppaths
 
 
 print(ppaths['APPLICATIONPATH'])
@@ -96,7 +101,7 @@ If it is not defined, the default value is <code>Debug</code>.
     ...
 ```
 ```python
-from MyUtils.logs import Styles, criticalLog, debugLog, errorLog, infoLog, setLoggingLevel, warningLog
+from MyPyUtils.logs import Styles, criticalLog, debugLog, errorLog, infoLog, setLoggingLevel, warningLog
 
 debugLog('Test debug')
 infoLog('Test info')
@@ -121,7 +126,7 @@ criticalLog('Test new critical', style= Styles.PURPLE)
 ```
 ### Immutable
 ```python
-from MyUtils.immutable import Immutable
+from MyPyUtils.immutable import Immutable
 
 class MyClass(metaclass= Immutable):
     ...
@@ -135,7 +140,7 @@ myObj.var = 0
 
 ### NoInstantiable
 ```python
-from MyUtils.noInstantiable import NoInstantiable
+from MyPyUtils.noInstantiable import NoInstantiable
 
 class MyClass(NoInstantiable):
     ...
@@ -149,7 +154,7 @@ myObj = MyClass()
 
 ### ValidationClass
 ```python
-from MyUtils.validation import ValidationClass
+from MyPyUtils.validation import ValidationClass
 
 class MyClass(ValidationClass):
     def __init__(self):        

@@ -22,7 +22,7 @@ setup(
     long_description_content_type= 'text/markdown',
     author= 'Jaimead7',
     author_email= 'alvarez.dia.jaime1@gmail.com',
-    url= 'https://github.com/Jaimead7/MyUtils',
+    url= 'https://github.com/Jaimead7/MyPyUtils',
     packages= find_packages(),
     classifiers=[
         'License :: OSI Approved :: MIT License',
@@ -33,6 +33,7 @@ setup(
     extras_require= {
         'dev': [
             'pytest',
+            'wheel'
         ],
     },
     python_requires= '>=3.10',
