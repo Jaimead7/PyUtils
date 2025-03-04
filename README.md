@@ -30,7 +30,6 @@ py -m pip install MyPyUtils
 
 ## Usage
 - [Config](docs/config.md)
-- [Immutable](docs/immutable.md)
 - [Logs](docs/logs.md)
 - [NoInstantiable](docs/noInstantiable.md)
 - [ValidationClass](docs/validationClass.md)
