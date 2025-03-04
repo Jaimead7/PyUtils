@@ -12,6 +12,11 @@ warnings.formatwarning = lambda msg, *args, **kwargs: f'\033[93mWARNING ---> {da
 
 # PATHS
 class ProjectPathsDict(dict):
+    APP_PATH = 'APPPATH'
+    DIST_PATH = 'DISTPATH'
+    CONFIG_PATH = 'CONFIGPATH'
+    CONFIG_FILE_PATH = 'CONFIGFILEPATH'
+    
     def __getattr__(self, name: str) -> Any:
         try:
             return self[name]
@@ -25,10 +30,10 @@ class ProjectPathsDict(dict):
         return super().__setitem__(key, None)
 
     def setAppPath(self, newAppPath: str) -> None:
-        self['APPLICATIONPATH'] = Path(newAppPath).resolve()
-        self['DISTPATH'] = self['APPLICATIONPATH'] / 'dist'
-        self['CONFIGPATH'] = self['APPLICATIONPATH'] / 'dist' / 'config'
-        self['CONFIGFILEPATH'] = self['APPLICATIONPATH'] / 'dist' / 'config' / 'config.toml'
+        self[self.APP_PATH] = Path(newAppPath).resolve()
+        self[self.DIST_PATH] = self[self.APP_PATH] / 'dist'
+        self[self.CONFIG_PATH] = self[self.APP_PATH] / 'dist' / 'config'
+        self[self.CONFIG_FILE_PATH] = self[self.APP_PATH] / 'dist' / 'config' / 'config.toml'
 
 ppaths = ProjectPathsDict()
 if getattr(sys, 'frozen', False):
@@ -43,8 +48,10 @@ class ConfigDict(dict):
     def __init__(self,
                  *args,
                  route: Optional[list] = None,
+                 filePath: Optional[Path] = None,
                  **kwargs) -> None:
         self._route: Optional[list] = route
+        self._filePath: Optional[Path] = filePath
         super().__init__(*args, **kwargs)
 
     def __getattr__(self, name: str) -> Any:
@@ -54,7 +61,7 @@ class ConfigDict(dict):
             try:
                 result: Any = self[str(name)]
             except KeyError:
-                raise AttributeError(f'"{name}" not found in the route {self._route}')
+                raise AttributeError(f'"{name}" not found in the route {self._route} of file "{self._filePath}"')
             if isinstance(result, dict):
                 newRoute: list | None = self._route
                 try:
@@ -62,7 +69,8 @@ class ConfigDict(dict):
                 except AttributeError:
                     newRoute = [str(name)]
                 return ConfigDict(result,
-                                  route= newRoute)
+                                  route= newRoute,
+                                  file_path= self._filePath)
             return result
 
 
@@ -94,14 +102,14 @@ class ConfigFileManager:
             if isinstance(result, dict):
                 result = ConfigDict(result,
                                     route= [str(name)],
-                                    filePath= self._filePath)
+                                    filePath= self._filePath,)
             return result
 
 
-if ppaths['CONFIGPATH'] is not None:
-    with open(ppaths['CONFIGFILEPATH'], 'a'):
+if ppaths[ProjectPathsDict.CONFIG_FILE_PATH] is not None:
+    with open(ppaths[ProjectPathsDict.CONFIG_FILE_PATH], 'a'):
         ...
-    cfg = ConfigFileManager(ppaths['CONFIGFILEPATH'])
+    cfg = ConfigFileManager(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
 else:
     warnings.warn(f'There is no default config file\n')
     cfg = None
