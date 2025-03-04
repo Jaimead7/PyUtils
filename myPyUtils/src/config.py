@@ -50,8 +50,8 @@ class ConfigDict(dict):
                  route: Optional[list] = None,
                  filePath: Optional[Path] = None,
                  **kwargs) -> None:
-        self._route: Optional[list] = route
-        self._filePath: Optional[Path] = filePath
+        self.route: Optional[list] = route
+        self.filePath: Optional[Path] = filePath
         super().__init__(*args, **kwargs)
 
     def __getattr__(self, name: str) -> Any:
@@ -63,14 +63,14 @@ class ConfigDict(dict):
             except KeyError:
                 raise AttributeError(f'"{name}" not found in the route {self._route} of file "{self._filePath}"')
             if isinstance(result, dict):
-                newRoute: list | None = self._route
+                newRoute: list | None = self.route
                 try:
                     newRoute.append(str(name))
                 except AttributeError:
                     newRoute = [str(name)]
                 return ConfigDict(result,
                                   route= newRoute,
-                                  file_path= self._filePath)
+                                  filePath= self.filePath)
             return result
 
 

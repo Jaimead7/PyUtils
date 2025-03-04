@@ -2,19 +2,20 @@
 #### ProjectPathsDict
 Dict with validation for paths. On error <code>path = None</code>.  
 <code>ppath</code> is an instance of <code>ProjectPathsDict</code> containing default paths.  
-Default <code>APPLICATIONPATH</code> is <code>../\<main>.py</code> when executed <code>py \<main>.py</code>.  
-Default <code>DISTPATH</code> is <code>APPLICATIONPATH/dist</code>  
-Default <code>CONFIGPATH</code> is <code>APPLICATIONPATH/dist/config</code>  
+Default <code>APP_PATH</code> is <code>../\<main>.py</code> when executed <code>py \<main>.py</code>. When executed from <code>prg.exe</code> is <code>../\<prg>.exe</code>  
+Default <code>DIST_PATH</code> is <code>APP_PATH/dist</code>  
+Default <code>CONFIG_PATH</code> is <code>APP_PATH/dist/config</code>  
+Default <code>CONFIG_FILE_PATH</code> is <code>APP_PATH/dist/config/config.toml</code>  
 
 #### ConfigFileManager
 Class to manage <code>.toml</code> files  
-<code>cfg</code> is an instance of <code>ConfigFileManager</code> for <code>APPLICATIONPATH/dist/config/config.toml</code>  
+<code>cfg</code> is an instance of <code>ConfigFileManager</code> for <code>APP_PATH/dist/config/config.toml</code>  
 On error <code>cfg = None</code>
 
 #### Example
 Project structure
 ```
-APPLICATIONPATH
+APP_PATH
 ├── dist
 │   ├── config
 │   │   ├── config.toml
@@ -37,28 +38,28 @@ main.py
 from MyPyUtils.config import ConfigFileManager, ProjectPathsDict, cfg, ppaths
 
 
-print(ppaths['APPLICATIONPATH'])
-print(ppaths['DISTPATH'])
-print(ppaths['CONFIGPATH'])
-print(ppaths['CONFIGFILEPATH'])
+print(ppaths[ProjectPathsDict.APP_PATH])
+print(ppaths[ProjectPathsDict.DIST_PATH])
+print(ppaths[ProjectPathsDict.CONFIG_PATH])
+print(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
 
 print(cfg.app.name)
 print(cfg.app.version)
 
-ppaths.setAppPath(ppaths['DISTPATH'])
-print(ppaths['APPLICATIONPATH'])
-print(ppaths['DISTPATH'])
-print(ppaths['CONFIGPATH'])
-print(ppaths['CONFIGFILEPATH'])
+ppaths.setAppPath(ppaths[ProjectPathsDict.DIST_PATH])
+print(ppaths[ProjectPathsDict.APP_PATH])
+print(ppaths[ProjectPathsDict.DIST_PATH])
+print(ppaths[ProjectPathsDict.CONFIG_PATH])
+print(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
 ```
 ```
->> C:/.../APPLICATIONPATH
->> C:/.../APPLICATIONPATH/dist
->> C:/.../APPLICATIONPATH/dist/config
->> C:/.../APPLICATIONPATH/dist/config/config.toml
+>> C:/.../APP_PATH
+>> C:/.../APP_PATH/dist
+>> C:/.../APP_PATH/dist/config
+>> C:/.../APP_PATH/dist/config/config.toml
 >> MyApp
 >> 0.0.1
->> C:/.../APPLICATIONPATH/dist
+>> C:/.../APP_PATH/dist
 >> None
 >> None
 >> None
