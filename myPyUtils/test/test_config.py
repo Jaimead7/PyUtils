@@ -51,5 +51,5 @@ class TestConfigFileManager:
     def test_routes(self, cfgManager: ConfigFileManager) -> None:
         assert cfgManager.app.author.route == ['app', 'author']
 
-    def test_filePath(self, cfgManager: ConfigFileManager, prjTestDict: ProjectPathsDict) -> None:
-        assert cfgManager.app.author.filePath == prjTestDict[ProjectPathsDict.CONFIG_FILE_PATH]
+    def test_fileManager(self, cfgManager: ConfigFileManager) -> None:
+        assert cfgManager.app.author.fileManager == cfgManager
