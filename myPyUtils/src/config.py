@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import inspect
+import operator
 import sys
 import warnings
 from datetime import datetime
+from functools import reduce
 from pathlib import Path
 from typing import Any, Optional
 
 import tomli
+import tomli_w
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\033[93mWARNING ---> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:\033[0m {msg}'
 
@@ -48,11 +53,17 @@ class ConfigDict(dict):
     def __init__(self,
                  *args,
                  route: Optional[list] = None,
-                 filePath: Optional[Path] = None,
+                 fileManager: Optional[ConfigFileManager] = None,
                  **kwargs) -> None:
         self.route: Optional[list] = route
-        self.filePath: Optional[Path] = filePath
+        self.fileManager: Optional[ConfigFileManager] = fileManager
         super().__init__(*args, **kwargs)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(route: {self.route}, fileManager: {self.fileManager})'
+
+    def __str__(self) -> str:
+        return str(self._data)
 
     def __getattr__(self, name: str) -> Any:
         try:
@@ -61,7 +72,7 @@ class ConfigDict(dict):
             try:
                 result: Any = self[str(name)]
             except KeyError:
-                raise AttributeError(f'"{name}" not found in the route {self._route} of file "{self._filePath}"')
+                raise AttributeError(f'"{name}" not found in the route {self.route} of file "{self.fileManager}"')
             if isinstance(result, dict):
                 newRoute: list | None = self.route
                 try:
@@ -70,8 +81,13 @@ class ConfigDict(dict):
                     newRoute = [str(name)]
                 return ConfigDict(result,
                                   route= newRoute,
-                                  filePath= self.filePath)
+                                  fileManager= self.fileManager)
             return result
+
+    def __setattr__(self, name, value) -> None:
+        if name in self.keys():
+            self.fileManager.writeVar(self.route + [name], value)
+        return super().__setattr__(name, value)
 
 
 class ConfigFileManager:
@@ -82,14 +98,8 @@ class ConfigFileManager:
         else:
             raise FileExistsError(f'{filePath} is not a config file')
 
-    @property
-    def _data(self) -> dict:
-        try:
-            with open(self._filePath, 'rb') as f:
-                data: dict = tomli.load(f)
-        except tomli.TOMLDecodeError:
-            raise tomli.TOMLDecodeError(f'{self._filePath} is not a valid .toml file')
-        return data
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(filePath: {self._filePath}, data: {self._data})'
 
     def __str__(self) -> str:
         return str(self._data)
@@ -102,8 +112,28 @@ class ConfigFileManager:
             if isinstance(result, dict):
                 result = ConfigDict(result,
                                     route= [str(name)],
-                                    filePath= self._filePath,)
+                                    fileManager= self,)
             return result
+
+    @property
+    def _data(self) -> dict:
+        try:
+            with open(self._filePath, 'rb') as f:
+                data: dict = tomli.load(f)
+        except tomli.TOMLDecodeError:
+            raise tomli.TOMLDecodeError(f'{self._filePath} is not a valid .toml file')
+        return data
+
+    def writeFile(self, fileContent: str | dict) -> None:
+        if isinstance(fileContent, str):
+            self._filePath.write_text(fileContent)
+        if isinstance(fileContent, dict):
+            self._filePath.write_text(tomli_w.dumps(fileContent))
+
+    def writeVar(self, route: list, value: Any) -> None:
+        data: dict = self._data
+        operator.setitem(reduce(operator.getitem, route[:-1], data), route[-1], value)
+        self.writeFile(data)
 
 
 if ppaths[ProjectPathsDict.CONFIG_FILE_PATH] is not None:

@@ -46,6 +46,10 @@ print(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
 print(cfg.app.name)
 print(cfg.app.version)
 
+cfg.app.version = '0.0.2'
+
+print(cfg.app.version)
+
 ppaths.setAppPath(ppaths[ProjectPathsDict.DIST_PATH])
 print(ppaths[ProjectPathsDict.APP_PATH])
 print(ppaths[ProjectPathsDict.DIST_PATH])
@@ -59,6 +63,7 @@ print(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
 >> C:/.../APP_PATH/dist/config/config.toml
 >> MyApp
 >> 0.0.1
+>> 0.0.2
 >> C:/.../APP_PATH/dist
 >> None
 >> None
