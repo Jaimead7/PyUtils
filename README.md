@@ -4,7 +4,7 @@ Different utilities for general purpose usage on python projects.
 <br>
 [![Tests indicator](https://github.com/Jaimead7/PyUtils/actions/workflows/python310-lint-test.yml/badge.svg)](https://github.com/Jaimead7/PyUtils/actions/workflows/python310-lint-test.yml)  
 [![License](https://img.shields.io/static/v1.svg?label=LICENSE&message=MIT&color=2dba4e&colorA=2b3137)](https://github.com/Jaimead7/PyUtils/blob/master/LICENSE)  
-[![PyPI Latest Release](https://img.shields.io/pypi/v/Jaimead7-PyUtils.svg?color=2dba4e)](https://pypi.org/project/Jaimead7-PyUtils/)
+[![PyPI Latest Release](https://img.shields.io/pypi/v/jaimead7-pyutils.svg?color=2dba4e)](https://pypi.org/project/jaimead7-pyutils/)
 
 ## Authors
 > Jaime Alvarez Diaz  
@@ -18,14 +18,14 @@ git clone https://github.com/Jaimead7/PyUtils.git
 cd PyUtils
 py -m pip install wheel tomli
 py setup.py bdist_wheel
-py -m pip install ./dist/Jaimead7-PyUtils-x.x.x-py3-none-any.whl
+py -m pip install ./dist/jaimead7_pyutils-x.x.x-py3-none-any.whl
 cd ..
 rm -r PyUtils
 ```
 
 Install as a package from pypi
 ```
-py -m pip install Jaimead7-PyUtils
+py -m pip install jaimead7-pyutils
 ```
 
 ## Usage
