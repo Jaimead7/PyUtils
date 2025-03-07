@@ -29,10 +29,10 @@ py -m pip install MyPyUtils
 ```
 
 ## Usage
-- [Config](docs/config.md)
-- [Logs](docs/logs.md)
-- [NoInstantiable](docs/noInstantiable.md)
-- [ValidationClass](docs/validationClass.md)
+- [Config](https://github.com/Jaimead7/MyPyUtils/blob/master/docs/config.md)
+- [Logs](https://github.com/Jaimead7/MyPyUtils/blob/master/docs/logs.md)
+- [NoInstantiable](https://github.com/Jaimead7/MyPyUtils/blob/master/docs/noInstantiable.md)
+- [ValidationClass](https://github.com/Jaimead7/MyPyUtils/blob/master/docs/validationClass.md)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first
