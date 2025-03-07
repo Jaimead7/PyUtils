@@ -92,11 +92,7 @@ class ConfigDict(dict):
 
 class ConfigFileManager:
     def __init__(self, filePath: str | Path) -> None:
-        pathFile: Path = Path(filePath).with_suffix('.toml')
-        if pathFile.is_file():
-            self._filePath: Path = pathFile.resolve()
-        else:
-            raise FileExistsError(f'{filePath} is not a config file')
+        self._setFilePath(filePath)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(filePath: {self._filePath}, data: {self._data})'
@@ -116,6 +112,14 @@ class ConfigFileManager:
             return result
 
     @property
+    def filePath(self) -> Path:
+        return self._filePath
+
+    @filePath.setter
+    def filePath(self, value: str | Path) -> None:
+        self._setFilePath(value)
+
+    @property
     def _data(self) -> dict:
         try:
             with open(self._filePath, 'rb') as f:
@@ -123,6 +127,13 @@ class ConfigFileManager:
         except tomli.TOMLDecodeError:
             raise tomli.TOMLDecodeError(f'{self._filePath} is not a valid .toml file')
         return data
+
+    def _setFilePath(self, value: str | Path) -> None:
+        value = Path(value).with_suffix('.toml')
+        if value.is_file():
+            self._filePath: Path = value.resolve()
+        else:
+            raise FileExistsError(f'{value} is not a config file')
 
     def writeFile(self, fileContent: str | dict) -> None:
         if isinstance(fileContent, str):
