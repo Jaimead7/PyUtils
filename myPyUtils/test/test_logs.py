@@ -1,12 +1,8 @@
-from os import path
-from pathlib import Path
 from re import search
 
 from pytest import LogCaptureFixture, fixture, mark
 
-from ..src.config import ConfigFileManager, cfg
 from ..src.logs import *
-from ..src.logs import _getLoggingLevel
 
 
 @fixture(autouse= True)
