@@ -1,10 +1,10 @@
-# MyPyUtils
+# PyUtils
 
 Different utilities for general purpose usage on python projects.  
 <br>
-[![Tests indicator](https://github.com/Jaimead7/MyPyUtils/actions/workflows/python310-lint-test.yml/badge.svg)](https://github.com/Jaimead7/MyPyUtils/actions/workflows/python310-lint-test.yml)  
-[![License](https://img.shields.io/static/v1.svg?label=LICENSE&message=MIT&color=2dba4e&colorA=2b3137)](https://github.com/Jaimead7/MyPyUtils/blob/master/LICENSE)  
-[![PyPI Latest Release](https://img.shields.io/pypi/v/MyPyUtils.svg?color=2dba4e)](https://pypi.org/project/MyPyUtils/)
+[![Tests indicator](https://github.com/Jaimead7/PyUtils/actions/workflows/python310-lint-test.yml/badge.svg)](https://github.com/Jaimead7/PyUtils/actions/workflows/python310-lint-test.yml)  
+[![License](https://img.shields.io/static/v1.svg?label=LICENSE&message=MIT&color=2dba4e&colorA=2b3137)](https://github.com/Jaimead7/PyUtils/blob/master/LICENSE)  
+[![PyPI Latest Release](https://img.shields.io/pypi/v/Jaimead7-PyUtils.svg?color=2dba4e)](https://pypi.org/project/Jaimead7-PyUtils/)
 
 ## Authors
 > Jaime Alvarez Diaz  
@@ -14,25 +14,25 @@ Different utilities for general purpose usage on python projects.
 ## Installation
 Install as a package from source files
 ```powershell
-git clone https://github.com/Jaimead7/MyPyUtils.git
-cd MyPyUtils
+git clone https://github.com/Jaimead7/PyUtils.git
+cd PyUtils
 py -m pip install wheel tomli
 py setup.py bdist_wheel
-py -m pip install ./dist/MyPyUtils-x.x.x-py3-none-any.whl
+py -m pip install ./dist/Jaimead7-PyUtils-x.x.x-py3-none-any.whl
 cd ..
-rm -r MyPyUtils
+rm -r PyUtils
 ```
 
 Install as a package from pypi (not implemented)
-```powershell
-py -m pip install MyPyUtils
+```
+py -m pip install Jaimead7-PyUtils
 ```
 
 ## Usage
-- [Config](https://github.com/Jaimead7/MyPyUtils/blob/master/docs/config.md)
-- [Logs](https://github.com/Jaimead7/MyPyUtils/blob/master/docs/logs.md)
-- [NoInstantiable](https://github.com/Jaimead7/MyPyUtils/blob/master/docs/noInstantiable.md)
-- [ValidationClass](https://github.com/Jaimead7/MyPyUtils/blob/master/docs/validationClass.md)
+- [Config](https://github.com/Jaimead7/PyUtils/blob/master/docs/config.md)
+- [Logs](https://github.com/Jaimead7/PyUtils/blob/master/docs/logs.md)
+- [NoInstantiable](https://github.com/Jaimead7/PyUtils/blob/master/docs/noInstantiable.md)
+- [ValidationClass](https://github.com/Jaimead7/PyUtils/blob/master/docs/validationClass.md)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first
