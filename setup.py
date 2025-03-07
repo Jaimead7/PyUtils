@@ -39,8 +39,9 @@ setup(
     install_requires= requires,
     extras_require= {
         'dev': [
-            'pytest',
-            'wheel'
+            'pytest>=8.3.4',
+            'wheel>=0.45.1',
+            'twine>=6.1.0'
         ],
     },
     python_requires= '>=3.10',
