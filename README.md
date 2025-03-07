@@ -23,7 +23,7 @@ cd ..
 rm -r PyUtils
 ```
 
-Install as a package from pypi (not implemented)
+Install as a package from pypi
 ```
 py -m pip install Jaimead7-PyUtils
 ```
