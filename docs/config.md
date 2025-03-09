@@ -35,7 +35,7 @@ config.toml
 ```
 main.py
 ```python
-from MyPyUtils.config import ConfigFileManager, ProjectPathsDict, cfg, ppaths
+from pyUtils.config import ConfigFileManager, ProjectPathsDict, cfg, ppaths
 
 
 print(ppaths[ProjectPathsDict.APP_PATH])

@@ -1,6 +1,6 @@
 ### ValidationClass
 ```python
-from MyPyUtils.validation import ValidationClass
+from pyUtils.validation import ValidationClass
 
 class MyClass(ValidationClass):
     def __init__(self):        

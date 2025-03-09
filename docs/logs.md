@@ -7,7 +7,7 @@ If it is not defined, the default value is <code>Debug</code>.
     ...
 ```
 ```python
-from MyPyUtils.logs import Styles, criticalLog, debugLog, errorLog, infoLog, setLoggingLevel, warningLog
+from pyUtils.logs import Styles, criticalLog, debugLog, errorLog, infoLog, setLoggingLevel, warningLog
 
 debugLog('Test debug')
 infoLog('Test info')

@@ -1,4 +1,4 @@
 [app]
-    name = "Jaimead7-PyUtils"
-    version = "0.0.7"
+    name = "jaimead7-pyutils"
+    version = "0.0.9"
     loggingLevel = "Debug"  # [Debug, Info, Warning, Error, Critical]
