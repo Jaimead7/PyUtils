@@ -1,6 +1,6 @@
 ### NoInstantiable
 ```python
-from MyPyUtils.noInstantiable import NoInstantiable
+from pyUtils.noInstantiable import NoInstantiable
 
 class MyClass(NoInstantiable):
     ...
