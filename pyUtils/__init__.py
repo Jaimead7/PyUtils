@@ -4,4 +4,4 @@ from .src.logs import (Styles, criticalLog, debugLog, errorLog, infoLog,
 from .src.noInstantiable import NoInstantiable
 from .src.validation import ValidationClass
 
-debugLog(f'Package loaded: myUtils', Styles.GREEN)
+debugLog(f'Package loaded: pyUtils', Styles.GREEN)

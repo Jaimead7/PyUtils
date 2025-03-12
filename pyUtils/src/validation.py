@@ -1,7 +1,7 @@
 from dataclasses import FrozenInstanceError
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Iterable, Optional
 
 from .logs import errorLog
 
@@ -158,15 +158,37 @@ class ValidationClass:
         return ValidationClass.validateBool(value)
 
     @staticmethod
-    def validateTuple(value: Any) -> tuple:
+    def validateTuple(value: Any,
+                      elementsTypes: Optional[tuple[type]] = None) -> tuple:
         try:
-            return tuple(value)
+            value = tuple(value)
+            if elementsTypes is not None:
+                if not all(isinstance(element, elementsTypes) for element in value):
+                    raise TypeError
+            return value
         except (ValueError, TypeError):
             raise TypeError(f'Invalid type tuple: {value}')
 
     @staticmethod
-    def validateList(value: Any) -> list:
+    def validateList(value: Any,
+                     elementsTypes: Optional[tuple[type]] = None) -> list:
         try:
-            return list(value)
+            value = list(value)
+            if elementsTypes is not None:
+                if not all(isinstance(element, elementsTypes) for element in value):
+                    raise TypeError
+            return value
+        except (ValueError, TypeError):
+            raise TypeError(f'Invalid type list: {value}')
+
+    @staticmethod
+    def validateDict(value: Any,
+                     elementsTypes: Optional[Iterable[type]] = None) -> list:
+        try:
+            value = dict(value)
+            if elementsTypes is not None:
+                if not all(isinstance(element, elementsTypes) for element in value.values()):
+                    raise TypeError
+            return value
         except (ValueError, TypeError):
             raise TypeError(f'Invalid type list: {value}')

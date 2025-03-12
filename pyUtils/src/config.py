@@ -29,23 +29,37 @@ class ProjectPathsDict(dict):
             return None
 
     def __setitem__(self, key, value) -> None:
-        if Path(value).exists():
-            return super().__setitem__(key, Path(value))
+        if value is not None:
+            if Path(value).exists():
+                return super().__setitem__(key, Path(value))
         warnings.warn(f'{value} is not a valid path\n')
         return super().__setitem__(key, None)
 
     def setAppPath(self, newAppPath: str) -> None:
         self[self.APP_PATH] = Path(newAppPath).resolve()
-        self[self.DIST_PATH] = self[self.APP_PATH] / 'dist'
-        self[self.CONFIG_PATH] = self[self.APP_PATH] / 'dist' / 'config'
-        self[self.CONFIG_FILE_PATH] = self[self.APP_PATH] / 'dist' / 'config' / 'config.toml'
+        try:
+            self[self.DIST_PATH] = self[self.APP_PATH] / 'dist'
+        except TypeError:
+            self[self.DIST_PATH] = None
+        try:
+            self[self.CONFIG_PATH] = self[self.APP_PATH] / 'dist' / 'config'
+        except TypeError:
+            self[self.CONFIG_PATH] = None
+        try:
+            self[self.CONFIG_FILE_PATH] = self[self.APP_PATH] / 'dist' / 'config' / 'config.toml'
+        except TypeError:
+            self[self.CONFIG_FILE_PATH] = None
+            
 
 ppaths = ProjectPathsDict()
 if getattr(sys, 'frozen', False):
     ppaths.setAppPath(Path(sys.executable).parents[1])  #CHECK
     #ppaths.setAppPath(path.abspath(path.join(path.dirname(sys.executable),'..')))
 elif __file__:
-    ppaths.setAppPath(Path(inspect.stack()[-1].filename).parents[1])  #CHECK
+    try:
+        ppaths.setAppPath(Path(inspect.stack()[-1].filename).parents[1])  #CHECK
+    except IndexError:
+        ppaths.setAppPath('None')
 
 
 # CONFIG

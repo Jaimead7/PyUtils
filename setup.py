@@ -26,7 +26,7 @@ setup(
     long_description= longDescription,
     long_description_content_type= 'text/markdown',
     author= 'Jaimead7',
-    author_email= 'alvarez.dia.jaime1@gmail.com',
+    author_email= 'alvarez.diaz.jaime1@gmail.com',
     url= 'https://github.com/Jaimead7/PyUtils',
     packages= find_packages(),
     package_data= {'pyUtils': ['dist/config/*.toml',]},
