@@ -23,6 +23,7 @@ class ClassWithValidation(ValidationClass):
     boolOptVar: Optional[bool] = None
     tupleVar: tuple = ()
     listVar: list = field(default_factory= list)
+    dictVar: dict = field(default_factory= dict)
 
     def validate_intVar(self, value: Any) -> int:
         return self.validateInt(value)
@@ -65,6 +66,9 @@ class ClassWithValidation(ValidationClass):
 
     def validate_listVar(self, value: Any) -> list:
         return self.validateList(value)
+
+    def validate_dictVar(self, value: Any) -> list:
+        return self.validateDict(value)
 
 @fixture
 def validationObj() -> ClassWithValidation:
@@ -329,6 +333,36 @@ class TestValidation:
         with raises(TypeError):
             validationObj.tupleVar = inValue
 
+    @mark.parametrize('inValue, types, outValue', [
+        ((1, 2), (int), (1, 2)),
+        ([1, 4, 2.1, 'a'], (int, float, str), (1, 4, 2.1, 'a')),
+    ])
+    def test_tupleWithTypes(self,
+                            validationObj: ClassWithValidation,
+                            inValue: Any,
+                            types: Iterable,
+                            outValue: tuple) -> None:
+        def validate_tupleWithTypesVar(value: Any) -> tuple:
+            return ValidationClass.validateTuple(value, types)
+        validationObj.validate_tupleWithTypesVar = validate_tupleWithTypesVar
+        validationObj.tupleWithTypesVar = inValue
+        assert validationObj.tupleWithTypesVar == outValue
+        assert type(validationObj.tupleWithTypesVar) == type(outValue)
+
+    @mark.parametrize('inValue, types', [
+        ((1, 2), (float)),
+        ([1, 4, 2.1, 'a'], (int, str)),
+    ])
+    def test_tupleWithTypesErrors(self,
+                                  validationObj: ClassWithValidation,
+                                  inValue: Any,
+                                  types: Iterable) -> None:
+        def validate_tupleWithTypesVar(value: Any) -> tuple:
+            return ValidationClass.validateTuple(value, types)
+        validationObj.validate_tupleWithTypesVar = validate_tupleWithTypesVar
+        with raises(TypeError):
+            validationObj.tupleWithTypesVar = inValue
+
     @mark.parametrize('inValue, outValue', [
         ((1, 2), [1, 2]),
         ([1, 2], [1, 2]),
@@ -346,3 +380,87 @@ class TestValidation:
     def test_listErrors(self, validationObj: ClassWithValidation, inValue: Any) -> None:
         with raises(TypeError):
             validationObj.listVar = inValue
+
+    @mark.parametrize('inValue, types, outValue', [
+        ((1, 2), (int), [1, 2]),
+        ([1, 4, 2.1, 'a'], (int, float, str), [1, 4, 2.1, 'a']),
+    ])
+    def test_listWithTypes(self,
+                           validationObj: ClassWithValidation,
+                           inValue: Any,
+                           types: Iterable,
+                           outValue: list) -> None:
+        def validate_listWithTypesVar(value: Any) -> list:
+            return ValidationClass.validateList(value, types)
+        validationObj.validate_listWithTypesVar = validate_listWithTypesVar
+        validationObj.listWithTypesVar = inValue
+        assert validationObj.listWithTypesVar == outValue
+        assert type(validationObj.listWithTypesVar) == type(outValue)
+
+    @mark.parametrize('inValue, types', [
+        ((1, 2), (float)),
+        ([1, 4, 2.1, 'a'], (int, str)),
+    ])
+    def test_listWithTypesErrors(self,
+                                  validationObj: ClassWithValidation,
+                                  inValue: Any,
+                                  types: Iterable) -> None:
+        def validate_listWithTypesVar(value: Any) -> list:
+            return ValidationClass.validateList(value, types)
+        validationObj.validate_listWithTypesVar = validate_listWithTypesVar
+        with raises(TypeError):
+            validationObj.listWithTypesVar = inValue
+
+
+
+
+    @mark.parametrize('inValue, outValue', [
+        ({'a': 1, 'b': 2}, {'a': 1, 'b': 2}),
+        ([('a', 1), ('b', 2)], {'a': 1, 'b': 2}),
+        ((('a', 1), ('b', 2)), {'a': 1, 'b': 2})
+    ])
+    def test_dict(self, validationObj: ClassWithValidation, inValue: Any, outValue: dict) -> None:
+        validationObj.dictVar = inValue
+        assert validationObj.dictVar == outValue
+        assert type(validationObj.dictVar) == type(outValue)
+
+    @mark.parametrize('inValue', [
+        5,
+        None,
+        (1, 'a'),
+        'abcd'
+    ])
+    def test_dictErrors(self, validationObj: ClassWithValidation, inValue: Any) -> None:
+        with raises(TypeError):
+            validationObj.dictVar = inValue
+
+    @mark.parametrize('inValue, types, outValue', [
+        ({'a': 1, 'b': 2}, (int), {'a': 1, 'b': 2}),
+        ({'a': 1.2, 'b': 2}, (int, float), {'a': 1.2, 'b': 2}),
+        ([('a', 'a'), ('b', 2)], (int, str), {'a': 'a', 'b': 2}),
+    ])
+    def test_dictWithTypes(self,
+                           validationObj: ClassWithValidation,
+                           inValue: Any,
+                           types: Iterable,
+                           outValue: dict) -> None:
+        def validate_dictWithTypesVar(value: Any) -> dict:
+            return ValidationClass.validateDict(value, types)
+        validationObj.validate_dictWithTypesVar = validate_dictWithTypesVar
+        validationObj.dictWithTypesVar = inValue
+        assert validationObj.dictWithTypesVar == outValue
+        assert type(validationObj.dictWithTypesVar) == type(outValue)
+
+    @mark.parametrize('inValue, types', [
+        ({'a': 1.2, 'b': 2}, (int)),
+        ([('a', 'a'), ('b', 2)], (str)),
+    ])
+    def test_dictWithTypesErrors(self,
+                                  validationObj: ClassWithValidation,
+                                  inValue: Any,
+                                  types: Iterable) -> None:
+        def validate_dictWithTypesVar(value: Any) -> dict:
+            return ValidationClass.validateDict(value, types)
+        validationObj.validate_dictWithTypesVar = validate_dictWithTypesVar
+        with raises(TypeError):
+            validationObj.dictWithTypesVar = inValue
