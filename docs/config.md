@@ -12,6 +12,10 @@ Class to manage <code>.toml</code> files
 <code>cfg</code> is an instance of <code>ConfigFileManager</code> for <code>APP_PATH/dist/config/config.toml</code>  
 On error <code>cfg = None</code>
 
+#### ConfigDict
+Class to access <code>dict</code> objects values with doted notation.
+Used by a ConfigFileManager to access data.
+
 #### Example
 Project structure
 ```
@@ -35,7 +39,7 @@ config.toml
 ```
 main.py
 ```python
-from pyUtils.config import ConfigFileManager, ProjectPathsDict, cfg, ppaths
+from .src.config import ConfigDict, ConfigFileManager, ProjectPathsDict, cfg, ppaths
 
 
 print(ppaths[ProjectPathsDict.APP_PATH])
