@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from .config import cfg
 
@@ -18,6 +17,22 @@ class Styles:
     CYAN = '\033[96m'
     GREEN = '\033[92m'
 
+
+class _MyFormatter(logging.Formatter):
+    FORMATS: dict = {
+        logging.DEBUG: Styles.DEBUG + '%(levelname)s -----> %(asctime)s:' + Styles.ENDC + ' %(message)s',
+        logging.INFO: Styles.INFO + '%(levelname)s ------> %(asctime)s:' + Styles.ENDC + ' %(message)s',
+        logging.WARNING: Styles.WARNING + '%(levelname)s ---> %(asctime)s:' + Styles.ENDC + ' %(message)s',
+        logging.ERROR: Styles.ERROR + '%(levelname)s -----> %(asctime)s:' + Styles.ENDC + ' %(message)s',
+        logging.CRITICAL: Styles.CRITICAL + '%(levelname)s --> %(asctime)s:' + Styles.ENDC + ' %(message)s',
+    }
+
+    def format(self, record) -> str:
+        log_fmt: str = self.FORMATS.get(record.levelno)
+        formatter = logging.Formatter(log_fmt, datefmt='%d/%m/%Y %H:%M:%S')
+        return formatter.format(record)
+
+
 def _getLoggingLevel() -> int:
     try:
         return logging.__dict__[cfg.app.loggingLevel.upper()]
@@ -25,22 +40,25 @@ def _getLoggingLevel() -> int:
         return logging.DEBUG
 
 def setLoggingLevel(lvl: int = _getLoggingLevel()) -> int:
-    logging.getLogger().setLevel(lvl)
+    _logger.setLevel(lvl)
+print(__name__)
+_logger: logging.Logger = logging.getLogger(__file__)
+setLoggingLevel()
+_streamHandler = logging.StreamHandler()
+_streamHandler.setFormatter(_MyFormatter())
+_logger.addHandler(_streamHandler)
 
-logging.basicConfig(level= _getLoggingLevel(),
-                    format= '%(message)s')
+def debugLog(msg: str, style: Styles = Styles.ENDC) -> None:
+    _logger.debug(f'{style}{msg}{Styles.ENDC}')
 
-def debugLog(msg: str, style: Styles = Styles.DEBUG) -> None:
-    logging.debug(f'{style}DEBUG -----> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+def infoLog(msg: str, style: Styles = Styles.ENDC) -> None:
+    _logger.info(f'{style}{msg}{Styles.ENDC}')
 
-def infoLog(msg: str, style: Styles = Styles.INFO) -> None:
-    logging.info(f'{style}INFO ------> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+def warningLog(msg: str, style: Styles = Styles.ENDC) -> None:
+    _logger.warning(f'{style}{msg}{Styles.ENDC}')
 
-def warningLog(msg: str, style: Styles = Styles.WARNING) -> None:
-    logging.warning(f'{style}WARNING ---> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+def errorLog(msg: str, style: Styles = Styles.ENDC) -> None:
+    _logger.error(f'{style}{msg}{Styles.ENDC}')
 
-def errorLog(msg: str, style: Styles = Styles.ERROR) -> None:
-    logging.error(f'{style}ERROR -----> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
-
-def criticalLog(msg: str, style: Styles = Styles.CRITICAL) -> None:
-    logging.critical(f'{style}CRITICAL --> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+def criticalLog(msg: str, style: Styles = Styles.ENDC) -> None:
+    _logger.critical(f'{style}{msg}{Styles.ENDC}')
