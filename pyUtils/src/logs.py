@@ -1,7 +1,4 @@
 import logging
-from datetime import datetime
-
-from .config import cfg
 
 
 class Styles:
@@ -18,29 +15,40 @@ class Styles:
     CYAN = '\033[96m'
     GREEN = '\033[92m'
 
-def _getLoggingLevel() -> int:
-    try:
-        return logging.__dict__[cfg.app.loggingLevel.upper()]
-    except (KeyError, AttributeError):
-        return logging.DEBUG
 
-def setLoggingLevel(lvl: int = _getLoggingLevel()) -> int:
-    logging.getLogger().setLevel(lvl)
+class _MyFormatter(logging.Formatter):
+    def format(self, record) -> str:
+        try:
+            customStyle: str = str(record.customStyle)
+        except AttributeError:
+            customStyle = Styles.ENDC
+        arrow: str = '-' * (10-len(record.levelname)) + '>'
+        log_fmt: str = f'{customStyle}{record.levelname} {arrow} %(asctime)s:{Styles.ENDC} {record.msg}'
+        formatter = logging.Formatter(log_fmt, datefmt='%d/%m/%Y %H:%M:%S')
+        return formatter.format(record)
 
-logging.basicConfig(level= _getLoggingLevel(),
-                    format= '%(message)s')
+
+def setLoggingLevel(lvl: int = logging.DEBUG) -> int:
+    _logger: logging.Logger = logging.getLogger(__name__)
+    _logger.setLevel(lvl)
+
+_logger: logging.Logger = logging.getLogger(__name__)
+setLoggingLevel()
+_streamHandler = logging.StreamHandler()
+_streamHandler.setFormatter(_MyFormatter())
+_logger.addHandler(_streamHandler)
 
 def debugLog(msg: str, style: Styles = Styles.DEBUG) -> None:
-    logging.debug(f'{style}DEBUG -----> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+    _logger.debug(f'{msg}', extra= {'customStyle': style})
 
 def infoLog(msg: str, style: Styles = Styles.INFO) -> None:
-    logging.info(f'{style}INFO ------> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+    _logger.info(f'{msg}', extra= {'customStyle': style})
 
 def warningLog(msg: str, style: Styles = Styles.WARNING) -> None:
-    logging.warning(f'{style}WARNING ---> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+    _logger.warning(f'{msg}', extra= {'customStyle': style})
 
 def errorLog(msg: str, style: Styles = Styles.ERROR) -> None:
-    logging.error(f'{style}ERROR -----> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+    _logger.error(f'{msg}', extra= {'customStyle': style})
 
 def criticalLog(msg: str, style: Styles = Styles.CRITICAL) -> None:
-    logging.critical(f'{style}CRITICAL --> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:{Styles.ENDC} {msg}')
+    _logger.critical(f'{msg}', extra= {'customStyle': style})
