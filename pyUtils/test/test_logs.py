@@ -1,4 +1,4 @@
-from re import search
+from logging import LogRecord
 
 from pytest import LogCaptureFixture, fixture, mark
 
@@ -12,40 +12,55 @@ def setCaplogLvl(caplog: LogCaptureFixture) -> None:
 
 
 class TestLogs:
-    @mark.parametrize('msg, expectedRe', [
-        ('Debug test message', '\\x1b\[94mDEBUG -----> (3[01]|[012][0-9])/(1[0-2]|0[1-9])/[0-9]{4} (2[0-3]|[10][0-9]):([0-5][0-9]):([0-5][0-9]):\\x1b\[0m Debug test message'),
+    @mark.parametrize('msg', [
+        'Debug test message',
     ])
-    def test_debug(self, msg: str, expectedRe: str, caplog: LogCaptureFixture) -> None:
+    def test_debug(self, msg: str, caplog: LogCaptureFixture) -> None:
         debugLog(msg)
-        assert bool(search(expectedRe, caplog.records[0].message))
+        record: LogRecord = caplog.records[0]
+        assert record.message == msg
+        assert record.levelno == logging.DEBUG
+        assert record.name == 'PyUtils.pyUtils.src.logs'
 
-    @mark.parametrize('msg, expectedRe', [
-        ('Info test message', '\\x1b\[0mINFO ------> (3[01]|[012][0-9])/(1[0-2]|0[1-9])/[0-9]{4} (2[0-3]|[10][0-9]):([0-5][0-9]):([0-5][0-9]):\\x1b\[0m Info test message'),
+    @mark.parametrize('msg', [
+        'Info test message',
     ])
-    def test_info(self, msg: str, expectedRe: str, caplog: LogCaptureFixture) -> None:
+    def test_info(self, msg: str, caplog: LogCaptureFixture) -> None:
         infoLog(msg)
-        assert bool(search(expectedRe, caplog.records[0].message))
+        record: LogRecord = caplog.records[0]
+        assert record.message == msg
+        assert record.levelno == logging.INFO
+        assert record.name == 'PyUtils.pyUtils.src.logs'
 
-    @mark.parametrize('msg, expectedRe', [
-        ('Warning test message', '\\x1b\[93mWARNING ---> (3[01]|[012][0-9])/(1[0-2]|0[1-9])/[0-9]{4} (2[0-3]|[10][0-9]):([0-5][0-9]):([0-5][0-9]):\\x1b\[0m Warning test message'),
+    @mark.parametrize('msg', [
+        'Warning test message',
     ])
-    def test_warning(self, msg: str, expectedRe: str, caplog: LogCaptureFixture) -> None:
+    def test_warning(self, msg: str, caplog: LogCaptureFixture) -> None:
         warningLog(msg)
-        assert bool(search(expectedRe, caplog.records[0].message))
+        record: LogRecord = caplog.records[0]
+        assert record.message == msg
+        assert record.levelno == logging.WARNING
+        assert record.name == 'PyUtils.pyUtils.src.logs'
 
-    @mark.parametrize('msg, expectedRe', [
-        ('Error test message', '\\x1b\[91mERROR -----> (3[01]|[012][0-9])/(1[0-2]|0[1-9])/[0-9]{4} (2[0-3]|[10][0-9]):([0-5][0-9]):([0-5][0-9]):\\x1b\[0m Error test message'),
+    @mark.parametrize('msg', [
+        'Error test message',
     ])
-    def test_error(self, msg: str, expectedRe: str, caplog: LogCaptureFixture) -> None:
+    def test_error(self, msg: str, caplog: LogCaptureFixture) -> None:
         errorLog(msg)
-        assert bool(search(expectedRe, caplog.records[0].message))
+        record: LogRecord = caplog.records[0]
+        assert record.message == msg
+        assert record.levelno == logging.ERROR
+        assert record.name == 'PyUtils.pyUtils.src.logs'
 
-    @mark.parametrize('msg, expectedRe', [
-        ('Critical test message', '\\x1b\[101mCRITICAL --> (3[01]|[012][0-9])/(1[0-2]|0[1-9])/[0-9]{4} (2[0-3]|[10][0-9]):([0-5][0-9]):([0-5][0-9]):\\x1b\[0m Critical test message'),
+    @mark.parametrize('msg', [
+        'Critical test message',
     ])
-    def test_critical(self, msg: str, expectedRe: str, caplog: LogCaptureFixture) -> None:
+    def test_critical(self, msg: str, caplog: LogCaptureFixture) -> None:
         criticalLog(msg)
-        assert bool(search(expectedRe, caplog.records[0].message))
+        record: LogRecord = caplog.records[0]
+        assert record.message == msg
+        assert record.levelno == logging.CRITICAL
+        assert record.name == 'PyUtils.pyUtils.src.logs'
 
     @mark.parametrize('lvl, nMessages', [
         (logging.DEBUG, 5),
