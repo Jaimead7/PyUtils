@@ -77,7 +77,7 @@ class ConfigDict(dict):
         return f'{self.__class__.__name__}(route: {self.route}, fileManager: {self.fileManager})'
 
     def __str__(self) -> str:
-        return str(self._data)
+        return str(dict(self.items()))
 
     def __getattr__(self, name: str) -> Any:
         try:
@@ -99,7 +99,7 @@ class ConfigDict(dict):
             return result
 
     def __setattr__(self, name, value) -> None:
-        if name in self.keys():
+        if name in self.keys() and self.fileManager is not None:
             self.fileManager.writeVar(self.route + [name], value)
         return super().__setattr__(name, value)
 
