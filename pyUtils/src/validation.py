@@ -159,7 +159,7 @@ class ValidationClass:
 
     @staticmethod
     def validateTuple(value: Any,
-                      elementsTypes: Optional[tuple[type]] = None) -> tuple:
+                      elementsTypes: Optional[Iterable[type]] = None) -> tuple:
         try:
             value = tuple(value)
             if elementsTypes is not None:
@@ -171,7 +171,7 @@ class ValidationClass:
 
     @staticmethod
     def validateList(value: Any,
-                     elementsTypes: Optional[tuple[type]] = None) -> list:
+                     elementsTypes: Optional[Iterable[type]] = None) -> list:
         try:
             value = list(value)
             if elementsTypes is not None:
@@ -183,11 +183,13 @@ class ValidationClass:
 
     @staticmethod
     def validateDict(value: Any,
-                     elementsTypes: Optional[Iterable[type]] = None) -> list:
+                     elementsTypes: Optional[Iterable[Iterable[type], Iterable[type]]] = None) -> dict:
         try:
             value = dict(value)
             if elementsTypes is not None:
-                if not all(isinstance(element, elementsTypes) for element in value.values()):
+                if not all(isinstance(key, elementsTypes[0]) for key in value.keys()):
+                    raise TypeError
+                if not all(isinstance(element, elementsTypes[1]) for element in value.values()):
                     raise TypeError
             return value
         except (ValueError, TypeError):

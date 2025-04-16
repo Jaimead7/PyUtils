@@ -435,9 +435,11 @@ class TestValidation:
             validationObj.dictVar = inValue
 
     @mark.parametrize('inValue, types, outValue', [
-        ({'a': 1, 'b': 2}, (int), {'a': 1, 'b': 2}),
-        ({'a': 1.2, 'b': 2}, (int, float), {'a': 1.2, 'b': 2}),
-        ([('a', 'a'), ('b', 2)], (int, str), {'a': 'a', 'b': 2}),
+        ({'a': 1, 'b': 2}, ((str), (int)), {'a': 1, 'b': 2}),
+        ({'a': 1.2, 'b': 2}, ((str), (int, float)), {'a': 1.2, 'b': 2}),
+        ([('a', 'a'), ('b', 2)], ((str), (int, str)), {'a': 'a', 'b': 2}),
+        ({1: 1, 2: 2}, ((int), (int)), {1: 1, 2: 2}),
+        ({1: 1.2, 'b': 2}, ((int, str), (int, float)), {1: 1.2, 'b': 2}),
     ])
     def test_dictWithTypes(self,
                            validationObj: ClassWithValidation,
@@ -452,8 +454,9 @@ class TestValidation:
         assert type(validationObj.dictWithTypesVar) == type(outValue)
 
     @mark.parametrize('inValue, types', [
-        ({'a': 1.2, 'b': 2}, (int)),
-        ([('a', 'a'), ('b', 2)], (str)),
+        ({'a': 1.2, 'b': 2}, ((str), (int))),
+        ([('a', 'a'), ('b', 2)], ((str), (str))),
+        ({'a': 1, 'b': 2}, ((int), (int))),
     ])
     def test_dictWithTypesErrors(self,
                                   validationObj: ClassWithValidation,
