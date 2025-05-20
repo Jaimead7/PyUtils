@@ -98,6 +98,19 @@ class ConfigDict(dict):
                                   fileManager= self.fileManager)
             return result
 
+    def __getitem__(self, key) -> Any:
+        result: Any =  super().__getitem__(key)
+        if isinstance(result, dict):
+            newRoute: list | None = self.route
+            try:
+                newRoute.append(str(key))
+            except AttributeError:
+                newRoute = [str(key)]
+            return ConfigDict(result,
+                              route= newRoute,
+                              fileManager= self.fileManager)
+        return result
+
     def __setattr__(self, name, value) -> None:
         if name in self.keys() and self.fileManager is not None:
             self.fileManager.writeVar(self.route + [name], value)
