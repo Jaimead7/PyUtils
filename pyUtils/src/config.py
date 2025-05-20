@@ -84,19 +84,9 @@ class ConfigDict(dict):
             return super().__getattribute__(name)
         except AttributeError:
             try:
-                result: Any = self[str(name)]
+                return self[str(name)]
             except KeyError:
                 raise AttributeError(f'"{name}" not found in the route {self.route} of file "{self.fileManager}"')
-            if isinstance(result, dict):
-                newRoute: list | None = self.route
-                try:
-                    newRoute.append(str(name))
-                except AttributeError:
-                    newRoute = [str(name)]
-                return ConfigDict(result,
-                                  route= newRoute,
-                                  fileManager= self.fileManager)
-            return result
 
     def __getitem__(self, key) -> Any:
         result: Any =  super().__getitem__(key)
