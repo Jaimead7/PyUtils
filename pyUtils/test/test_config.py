@@ -1,12 +1,18 @@
+import logging
 from pathlib import Path
 
-from pytest import fixture, mark, warns
+from pytest import LogCaptureFixture, fixture, mark
 
 from ..src.config import *
 
 
 def getCfgContent() -> str:
     return '[app]\n\tname = "MyPyUtils"\n\tloggingLevel = "Debug"\n\tnumber = 1.5\n\t[app.author]\n\t\tname = "Jaimead7"\n\t\turl = "https://github.com/Jaimead7"'
+
+@fixture(autouse= True)
+def setCaplogLvl(caplog: LogCaptureFixture) -> None:
+    caplog.set_level(logging.DEBUG)
+    caplog.clear()
 
 @fixture(autouse= True)
 def configureTestFolder(tmp_path: Path) -> None:
@@ -35,9 +41,10 @@ class TestProjectPaths:
         assert prjTestDict[ProjectPathsDict.CONFIG_PATH] == tmp_path / 'dist' / 'config'
         assert prjTestDict[ProjectPathsDict.CONFIG_FILE_PATH] == tmp_path / 'dist' / 'config' / 'config.toml'
 
-    def test_errors(self, prjTestDict: ProjectPathsDict) -> None:
-        with warns(UserWarning):
-            prjTestDict['ERROR_PATH'] = 'noPath'
+    def test_errors(self, prjTestDict: ProjectPathsDict, caplog: LogCaptureFixture) -> None:
+        prjTestDict['ERROR_PATH'] = 'noPath'
+        record: logging.LogRecord = caplog.records[0]
+        assert record.levelno == logging.WARNING
         assert prjTestDict['ERROR_PATH'] == None
 
 

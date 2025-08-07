@@ -3,16 +3,17 @@ from __future__ import annotations
 import inspect
 import operator
 import sys
-import warnings
-from datetime import datetime
 from functools import reduce
 from pathlib import Path
 from typing import Any, Optional
 
 import tomli
 import tomli_w
+from typing_extensions import Self
 
-warnings.formatwarning = lambda msg, *args, **kwargs: f'\033[93mWARNING ---> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:\033[0m {msg}'
+from .logs import MyLogger
+
+myLogger: MyLogger = MyLogger(__name__)
 
 
 # PATHS
@@ -32,10 +33,10 @@ class ProjectPathsDict(dict):
         if value is not None:
             if Path(value).exists():
                 return super().__setitem__(key, Path(value))
-        warnings.warn(f'{value} is not a valid path\n')
+        myLogger.warningLog(f'"{value}" path does not exists.')
         return super().__setitem__(key, None)
 
-    def setAppPath(self, newAppPath: str) -> None:
+    def setAppPath(self, newAppPath: str) -> Self:
         self[self.APP_PATH] = Path(newAppPath).resolve()
         try:
             self[self.DIST_PATH] = self[self.APP_PATH] / 'dist'
@@ -49,7 +50,18 @@ class ProjectPathsDict(dict):
             self[self.CONFIG_FILE_PATH] = self[self.APP_PATH] / 'dist' / 'config' / 'config.toml'
         except TypeError:
             self[self.CONFIG_FILE_PATH] = None
-            
+        return self
+
+    def getExecFolder() -> None:
+        if getattr(sys, 'frozen', False):
+            return Path(sys.executable).parents[1]  #CHECK
+            #path.abspath(path.join(path.dirname(sys.executable),'..'))
+        elif __file__:
+            try:
+                return Path(inspect.stack()[-1].filename).parents[1]  #CHECK
+            except IndexError:
+                return None
+
 
 ppaths = ProjectPathsDict()
 if getattr(sys, 'frozen', False):
@@ -86,7 +98,9 @@ class ConfigDict(dict):
             try:
                 return self[str(name)]
             except KeyError:
-                raise AttributeError(f'"{name}" not found in the route {self.route} of file "{self.fileManager}"')
+                msg: str = f'"{name}" not found in the route "{self.route}" of file "{self.fileManager}".'
+                myLogger.errorLog(msg)
+                raise AttributeError(msg)
 
     def __getitem__(self, key) -> Any:
         result: Any =  super().__getitem__(key)
@@ -142,7 +156,9 @@ class ConfigFileManager:
             with open(self._filePath, 'rb') as f:
                 data: dict = tomli.load(f)
         except tomli.TOMLDecodeError:
-            raise tomli.TOMLDecodeError(f'{self._filePath} is not a valid .toml file')
+            msg: str = f'{self._filePath} is not a valid .toml file.'
+            myLogger.errorLog(msg)
+            raise tomli.TOMLDecodeError(msg)
         return data
 
     def _setFilePath(self, value: str | Path) -> None:
@@ -150,7 +166,9 @@ class ConfigFileManager:
         if value.is_file():
             self._filePath: Path = value.resolve()
         else:
-            raise FileExistsError(f'{value} is not a config file')
+            msg: str = f'{value} is not a config file.'
+            myLogger.errorLog(msg)
+            raise FileExistsError(msg)
 
     def writeFile(self, fileContent: str | dict) -> None:
         if isinstance(fileContent, str):
@@ -169,5 +187,5 @@ if ppaths[ProjectPathsDict.CONFIG_FILE_PATH] is not None:
         ...
     cfg = ConfigFileManager(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
 else:
-    warnings.warn(f'There is no default config file\n')
+    myLogger.warningLog(f'There is no default config file.')
     cfg = None

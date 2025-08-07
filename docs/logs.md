@@ -7,26 +7,29 @@ If it is not defined, the default value is <code>Debug</code>.
     ...
 ```
 ```python
-from pyUtils.logs import Styles, criticalLog, debugLog, errorLog, infoLog, setLoggingLevel, warningLog
+import logging
+from pyUtils.logs import Styles, MyLogger
 
-debugLog('Test debug')
-infoLog('Test info')
-warningLog('Test warning')
-errorLog('Test error')
-criticalLog('Test critical')
+myLogger = MyLogger(__name__, logging.DEBUG)
 
-setLoggingLevel(logging.CRITICAL)
+myLogger.debugLog('Test debug')
+myLogger.infoLog('Test info')
+myLogger.warningLog('Test warning')
+myLogger.errorLog('Test error')
+myLogger.criticalLog('Test critical')
 
-debugLog('Test new debug', style= Styles.PURPLE)
-infoLog('Test new info', style= Styles.PURPLE)
-warningLog('Test new warning', style= Styles.PURPLE)
-errorLog('Test new error', style= Styles.PURPLE)
-criticalLog('Test new critical', style= Styles.PURPLE)
+myLogger.setLoggingLevel(logging.CRITICAL)
+
+myLogger.debugLog('Test new debug', style= Styles.PURPLE)
+myLogger.infoLog('Test new info', style= Styles.PURPLE)
+myLogger.warningLog('Test new warning', style= Styles.PURPLE)
+myLogger.errorLog('Test new error', style= Styles.PURPLE)
+myLogger.criticalLog('Test new critical', style= Styles.PURPLE)
 ```  
 ```
->> DEBUG -----> 01/03/2025 13:55:42: Test debug1
->> WARNING ---> 01/03/2025 13:55:42: Test warning
->> ERROR -----> 01/03/2025 13:55:42: Test error
->> CRITICAL --> 01/03/2025 13:55:42: Test critical
->> CRITICAL --> 01/03/2025 13:55:42: Test new critical
+>> DEBUG[Logg.Name] -----> 01/03/2025 13:55:42: Test debug1
+>> WARNING[Logg.Name] ---> 01/03/2025 13:55:42: Test warning
+>> ERROR[Logg.Name] -----> 01/03/2025 13:55:42: Test error
+>> CRITICAL[Logg.Name] --> 01/03/2025 13:55:42: Test critical
+>> CRITICAL[Logg.Name] --> 01/03/2025 13:55:42: Test new critical
 ```
