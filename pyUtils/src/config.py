@@ -36,7 +36,13 @@ class ProjectPathsDict(dict):
         myLogger.warningLog(f'"{value}" path does not exists.')
         return super().__setitem__(key, None)
 
-    def setAppPath(self, newAppPath: str) -> Self:
+    def setAppPath(self, newAppPath: str | Path | None) -> Self:
+        if newAppPath is None:
+            self[self.APP_PATH] = None
+            self[self.DIST_PATH] = None
+            self[self.CONFIG_PATH] = None
+            self[self.CONFIG_FILE_PATH] = None
+            return self
         self[self.APP_PATH] = Path(newAppPath).resolve()
         try:
             self[self.DIST_PATH] = self[self.APP_PATH] / 'dist'
@@ -52,7 +58,8 @@ class ProjectPathsDict(dict):
             self[self.CONFIG_FILE_PATH] = None
         return self
 
-    def getExecFolder() -> None:
+    @staticmethod
+    def getExecFolder() -> Optional[Path]:
         if getattr(sys, 'frozen', False):
             return Path(sys.executable).parents[1]  #CHECK
             #path.abspath(path.join(path.dirname(sys.executable),'..'))
@@ -102,22 +109,26 @@ class ConfigDict(dict):
                 myLogger.errorLog(msg)
                 raise AttributeError(msg)
 
-    def __getitem__(self, key) -> Any:
+    def __getitem__(self, key: str) -> Any:
         result: Any =  super().__getitem__(key)
         if isinstance(result, dict):
-            newRoute: list | None = self.route
-            try:
-                newRoute.append(str(key))
-            except AttributeError:
+            newRoute: Optional[list] = self.route
+            if newRoute is None:
                 newRoute = [str(key)]
+            else:
+                newRoute.append(str(key))
             return ConfigDict(result,
                               route= newRoute,
                               fileManager= self.fileManager)
         return result
 
-    def __setattr__(self, name, value) -> None:
+    def __setattr__(self, name, value: Any) -> None:
         if name in self.keys() and self.fileManager is not None:
-            self.fileManager.writeVar(self.route + [name], value)
+            if self.route is None:
+                route: list = [name]
+            else:
+                route: list = self.route + [name]
+            self.fileManager.writeVar(route, value)
         return super().__setattr__(name, value)
 
 

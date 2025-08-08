@@ -37,7 +37,7 @@ class ValidationClass:
             except FrozenInstanceError:
                 object.__setattr__(self, name, method(getattr(self, name)))
             except ValueError as eMsg:
-                myLogger.errorLog(eMsg)
+                myLogger.errorLog(str(eMsg))
         else:
             super().__setattr__(name, value)
 
@@ -160,7 +160,7 @@ class ValidationClass:
 
     @staticmethod
     def validateTuple(value: Any,
-                      elementsTypes: Optional[Iterable[type]] = None) -> tuple:
+                      elementsTypes: Optional[tuple[type]] = None) -> tuple:
         try:
             value = tuple(value)
             if elementsTypes is not None:
@@ -172,7 +172,7 @@ class ValidationClass:
 
     @staticmethod
     def validateList(value: Any,
-                     elementsTypes: Optional[Iterable[type]] = None) -> list:
+                     elementsTypes: Optional[tuple[type]] = None) -> list:
         try:
             value = list(value)
             if elementsTypes is not None:
@@ -188,9 +188,9 @@ class ValidationClass:
         try:
             value = dict(value)
             if elementsTypes is not None:
-                if not all(isinstance(key, elementsTypes[0]) for key in value.keys()):
+                if not all(isinstance(key, tuple(elementsTypes)[0]) for key in value.keys()):
                     raise TypeError
-                if not all(isinstance(element, elementsTypes[1]) for element in value.values()):
+                if not all(isinstance(element, tuple(elementsTypes)[1]) for element in value.values()):
                     raise TypeError
             return value
         except (ValueError, TypeError):

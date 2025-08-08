@@ -1,12 +1,18 @@
 import time
 from functools import wraps
-from typing import Any, Callable, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Optional, TypeVar, Union, cast, overload
 
 from .logs import MyLogger
 
 myLogger: MyLogger = MyLogger(__name__)
 
 F = TypeVar('F', bound= Callable[..., Any])
+
+@overload
+def timeMe(_func: F) -> F: ...
+
+@overload
+def timeMe(*, debug: bool = True) -> Callable[[F], F]: ...
 
 def timeMe(
     _func: Optional[F] = None,

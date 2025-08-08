@@ -1,6 +1,5 @@
 import logging
 
-
 class Styles:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
@@ -19,7 +18,7 @@ class Styles:
 
 class _MyFormatter(logging.Formatter):
     def format(self, record) -> str:
-        customStyle: str = str(record.customStyle) if hasattr(record, 'customStyle') else Styles.ENDC
+        customStyle: str = getattr(record, 'customStyle') if hasattr(record, 'customStyle') else Styles.ENDC
         arrow: str = '-' * (30 - len(record.levelname + f"[{record.name}]")) + '>'
         log_fmt: str = f'{customStyle}{record.levelname}[{record.name}] {arrow} %(asctime)s:{Styles.ENDC} {record.msg}'
         formatter = logging.Formatter(log_fmt, datefmt='%d/%m/%Y %H:%M:%S')
@@ -42,20 +41,34 @@ class MyLogger():
             self._logger: logging.Logger = logging.getLogger(loggerName)
             self.setLoggingLevel(loggingLevel)
 
-    def setLoggingLevel(self, lvl: int = logging.DEBUG) -> int:
+    def setLoggingLevel(self, lvl: int = logging.DEBUG) -> None:
         self._logger.setLevel(lvl)
 
-    def debugLog(self, msg: str, style: Styles = Styles.DEBUG) -> None:
+    def debugLog(self, msg: str, style: str = Styles.DEBUG) -> None:
         self._logger.debug(f'{msg}', extra= {'customStyle': style})
 
-    def infoLog(self, msg: str, style: Styles = Styles.INFO) -> None:
+    def infoLog(self, msg: str, style: str = Styles.INFO) -> None:
         self._logger.info(f'{msg}', extra= {'customStyle': style})
 
-    def warningLog(self, msg: str, style: Styles = Styles.WARNING) -> None:
+    def warningLog(self, msg: str, style: str = Styles.WARNING) -> None:
         self._logger.warning(f'{msg}', extra= {'customStyle': style})
 
-    def errorLog(self, msg: str, style: Styles = Styles.ERROR) -> None:
+    def errorLog(self, msg: str, style: str = Styles.ERROR) -> None:
         self._logger.error(f'{msg}', extra= {'customStyle': style})
 
-    def criticalLog(self, msg: str, style: Styles = Styles.CRITICAL) -> None:
+    def criticalLog(self, msg: str, style: str = Styles.CRITICAL) -> None:
         self._logger.critical(f'{msg}', extra= {'customStyle': style})
+
+    @staticmethod
+    def get_lvl_int(lvl_str: str) -> int:
+        lvls: dict[str, int] = {
+            'DEBUG': logging.DEBUG,
+            'INFO': logging.INFO,
+            'WARNING': logging.WARNING,
+            'ERROR': logging.ERROR,
+            'CRITICA': logging.CRITICAL,
+        }
+        try:
+            return lvls[lvl_str.upper()]
+        except KeyError:
+            return logging.DEBUG

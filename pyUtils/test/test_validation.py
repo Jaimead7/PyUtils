@@ -67,7 +67,7 @@ class ClassWithValidation(ValidationClass):
     def validate_listVar(self, value: Any) -> list:
         return self.validateList(value)
 
-    def validate_dictVar(self, value: Any) -> list:
+    def validate_dictVar(self, value: Any) -> dict:
         return self.validateDict(value)
 
 @fixture
@@ -225,7 +225,7 @@ class TestValidation:
         '1',
         'a',
     ])
-    def test_dtErrors(self, validationObj: ClassWithValidation, inValue: Any) -> None:
+    def test_dtOptErrors(self, validationObj: ClassWithValidation, inValue: Any) -> None:
         with raises(TypeError):
             validationObj.dtOptVar = inValue
 
@@ -340,14 +340,14 @@ class TestValidation:
     def test_tupleWithTypes(self,
                             validationObj: ClassWithValidation,
                             inValue: Any,
-                            types: Iterable,
+                            types: tuple[type],
                             outValue: tuple) -> None:
         def validate_tupleWithTypesVar(value: Any) -> tuple:
             return ValidationClass.validateTuple(value, types)
         validationObj.validate_tupleWithTypesVar = validate_tupleWithTypesVar
         validationObj.tupleWithTypesVar = inValue
-        assert validationObj.tupleWithTypesVar == outValue
-        assert type(validationObj.tupleWithTypesVar) == type(outValue)
+        assert getattr(validationObj, 'tupleWithTypesVar') == outValue
+        assert type(getattr(validationObj, 'tupleWithTypesVar')) == type(outValue)
 
     @mark.parametrize('inValue, types', [
         ((1, 2), (float)),
@@ -356,7 +356,7 @@ class TestValidation:
     def test_tupleWithTypesErrors(self,
                                   validationObj: ClassWithValidation,
                                   inValue: Any,
-                                  types: Iterable) -> None:
+                                  types: tuple[type]) -> None:
         def validate_tupleWithTypesVar(value: Any) -> tuple:
             return ValidationClass.validateTuple(value, types)
         validationObj.validate_tupleWithTypesVar = validate_tupleWithTypesVar
@@ -388,14 +388,14 @@ class TestValidation:
     def test_listWithTypes(self,
                            validationObj: ClassWithValidation,
                            inValue: Any,
-                           types: Iterable,
+                           types: tuple[type],
                            outValue: list) -> None:
         def validate_listWithTypesVar(value: Any) -> list:
             return ValidationClass.validateList(value, types)
         validationObj.validate_listWithTypesVar = validate_listWithTypesVar
         validationObj.listWithTypesVar = inValue
-        assert validationObj.listWithTypesVar == outValue
-        assert type(validationObj.listWithTypesVar) == type(outValue)
+        assert getattr(validationObj, 'listWithTypesVar') == outValue
+        assert type(getattr(validationObj, 'listWithTypesVar')) == type(outValue)
 
     @mark.parametrize('inValue, types', [
         ((1, 2), (float)),
@@ -404,15 +404,12 @@ class TestValidation:
     def test_listWithTypesErrors(self,
                                   validationObj: ClassWithValidation,
                                   inValue: Any,
-                                  types: Iterable) -> None:
+                                  types: tuple[type]) -> None:
         def validate_listWithTypesVar(value: Any) -> list:
             return ValidationClass.validateList(value, types)
         validationObj.validate_listWithTypesVar = validate_listWithTypesVar
         with raises(TypeError):
             validationObj.listWithTypesVar = inValue
-
-
-
 
     @mark.parametrize('inValue, outValue', [
         ({'a': 1, 'b': 2}, {'a': 1, 'b': 2}),
@@ -450,8 +447,8 @@ class TestValidation:
             return ValidationClass.validateDict(value, types)
         validationObj.validate_dictWithTypesVar = validate_dictWithTypesVar
         validationObj.dictWithTypesVar = inValue
-        assert validationObj.dictWithTypesVar == outValue
-        assert type(validationObj.dictWithTypesVar) == type(outValue)
+        assert getattr(validationObj, 'dictWithTypesVar') == outValue
+        assert type(getattr(validationObj, 'dictWithTypesVar')) == type(outValue)
 
     @mark.parametrize('inValue, types', [
         ({'a': 1.2, 'b': 2}, ((str), (int))),

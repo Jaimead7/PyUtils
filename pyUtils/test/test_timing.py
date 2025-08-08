@@ -13,13 +13,9 @@ def setCaplogLvl(caplog: LogCaptureFixture) -> None:
     caplog.set_level(logging.DEBUG)
     caplog.clear()
 
-@fixture()
-def myLogger() -> MyLogger:
-    return MyLogger(LOGGER_NAME, logging.DEBUG)
-
 
 class TestTiming:
-    def test_timing_normal(self, caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
+    def test_timing_normal(self, caplog: LogCaptureFixture) -> None:
         @timeMe
         def test_func() -> None:
             [_ for _ in range(90000)]
@@ -29,7 +25,7 @@ class TestTiming:
         print(record.message)
         assert bool(re.fullmatch(r'.* execution time: .*s\.$', record.message))
 
-    def test_timing_called(self, caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
+    def test_timing_called(self, caplog: LogCaptureFixture) -> None:
         @timeMe()
         def test_func() -> None:
             [_ for _ in range(90000)]
@@ -39,7 +35,7 @@ class TestTiming:
         print(record.message)
         assert bool(re.fullmatch(r'.* execution time: .*s\.$', record.message))
 
-    def test_timing_muted(self, caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
+    def test_timing_muted(self, caplog: LogCaptureFixture) -> None:
         @timeMe(debug= False)
         def test_func() -> None:
             [_ for _ in range(90000)]
