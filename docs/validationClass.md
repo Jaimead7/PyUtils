@@ -8,13 +8,13 @@ class MyClass(ValidationClass):
     
     def validate_var(self, value: Any):
         try:
-            return self.validateFloat(value)
+            return self.validate_float(value)
         except TypeError:
             raise TypeError(f'Invalid type {self.__class__}.var: {value}')
 
     ...
 
-intVar = ValidationClass.ValidateInt('5')
+intVar = ValidationClass.Validate_int('5')
 print(type(intVar))
 myObj = MyClass()
 print(type(myObj.var))

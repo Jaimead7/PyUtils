@@ -10,7 +10,7 @@ class NoInstantiableClass(NoInstantiable):
         ...
 
     @staticmethod
-    def testFunc() -> Literal[True]:
+    def test_func() -> Literal[True]:
         return True
 
 
@@ -20,4 +20,4 @@ class TestNoInstantiable:
             obj = NoInstantiableClass()
 
     def test_funcCalls(self) -> None:
-        assert NoInstantiableClass.testFunc()
+        assert NoInstantiableClass.test_func()

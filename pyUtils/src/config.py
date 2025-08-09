@@ -3,19 +3,19 @@ from __future__ import annotations
 import inspect
 import operator
 import sys
-import warnings
-from datetime import datetime
 from functools import reduce
 from pathlib import Path
 from typing import Any, Optional
 
 import tomli
 import tomli_w
+from typing_extensions import Self
 
-warnings.formatwarning = lambda msg, *args, **kwargs: f'\033[93mWARNING ---> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}:\033[0m {msg}'
+from .logs import MyLogger
+
+my_logger: MyLogger = MyLogger(__name__)
 
 
-# PATHS
 class ProjectPathsDict(dict):
     APP_PATH = 'APPPATH'
     DIST_PATH = 'DISTPATH'
@@ -32,11 +32,17 @@ class ProjectPathsDict(dict):
         if value is not None:
             if Path(value).exists():
                 return super().__setitem__(key, Path(value))
-        warnings.warn(f'{value} is not a valid path\n')
+        my_logger.warning(f'"{value}" path does not exists.')
         return super().__setitem__(key, None)
 
-    def setAppPath(self, newAppPath: str) -> None:
-        self[self.APP_PATH] = Path(newAppPath).resolve()
+    def set_app_path(self, new_app_path: str | Path | None) -> Self:
+        if new_app_path is None:
+            self[self.APP_PATH] = None
+            self[self.DIST_PATH] = None
+            self[self.CONFIG_PATH] = None
+            self[self.CONFIG_FILE_PATH] = None
+            return self
+        self[self.APP_PATH] = Path(new_app_path).resolve()
         try:
             self[self.DIST_PATH] = self[self.APP_PATH] / 'dist'
         except TypeError:
@@ -49,32 +55,38 @@ class ProjectPathsDict(dict):
             self[self.CONFIG_FILE_PATH] = self[self.APP_PATH] / 'dist' / 'config' / 'config.toml'
         except TypeError:
             self[self.CONFIG_FILE_PATH] = None
-            
+        return self
 
-ppaths = ProjectPathsDict()
-if getattr(sys, 'frozen', False):
-    ppaths.setAppPath(Path(sys.executable).parents[1])  #CHECK
-    #ppaths.setAppPath(path.abspath(path.join(path.dirname(sys.executable),'..')))
-elif __file__:
-    try:
-        ppaths.setAppPath(Path(inspect.stack()[-1].filename).parents[1])  #CHECK
-    except IndexError:
-        ppaths.setAppPath('None')
+    @staticmethod
+    def get_exec_folder() -> Optional[Path]:
+        if getattr(sys, 'frozen', False):
+            return Path(sys.executable).parents[1]  #CHECK
+            #path.abspath(path.join(path.dirname(sys.executable),'..'))
+        elif __file__:
+            try:
+                return Path(inspect.stack()[-1].filename).parents[1]  #CHECK
+            except IndexError:
+                return None
 
 
-# CONFIG
+ppaths: ProjectPathsDict = ProjectPathsDict() \
+    .set_app_path(ProjectPathsDict.get_exec_folder())
+
+
 class ConfigDict(dict):
-    def __init__(self,
-                 *args,
-                 route: Optional[list] = None,
-                 fileManager: Optional[ConfigFileManager] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *args,
+        route: Optional[list] = None,
+        file_manager: Optional[ConfigFileManager] = None,
+        **kwargs
+    ) -> None:
         self.route: Optional[list] = route
-        self.fileManager: Optional[ConfigFileManager] = fileManager
+        self.file_manager: Optional[ConfigFileManager] = file_manager
         super().__init__(*args, **kwargs)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(route: {self.route}, fileManager: {self.fileManager})'
+        return f'{self.__class__.__name__}(route: {self.route}, fileManager: {self.file_manager})'
 
     def __str__(self) -> str:
         return str(dict(self.items()))
@@ -86,33 +98,41 @@ class ConfigDict(dict):
             try:
                 return self[str(name)]
             except KeyError:
-                raise AttributeError(f'"{name}" not found in the route {self.route} of file "{self.fileManager}"')
+                msg: str = f'"{name}" not found in the route "{self.route}" of file "{self.file_manager}".'
+                my_logger.error(msg)
+                raise AttributeError(msg)
 
-    def __getitem__(self, key) -> Any:
+    def __getitem__(self, key: str) -> Any:
         result: Any =  super().__getitem__(key)
         if isinstance(result, dict):
-            newRoute: list | None = self.route
-            try:
-                newRoute.append(str(key))
-            except AttributeError:
-                newRoute = [str(key)]
-            return ConfigDict(result,
-                              route= newRoute,
-                              fileManager= self.fileManager)
+            new_route: Optional[list] = self.route
+            if new_route is None:
+                new_route = [str(key)]
+            else:
+                new_route.append(str(key))
+            return ConfigDict(
+                result,
+                route= new_route,
+                file_manager= self.file_manager
+            )
         return result
 
-    def __setattr__(self, name, value) -> None:
-        if name in self.keys() and self.fileManager is not None:
-            self.fileManager.writeVar(self.route + [name], value)
+    def __setattr__(self, name, value: Any) -> None:
+        if name in self.keys() and self.file_manager is not None:
+            if self.route is None:
+                route: list = [name]
+            else:
+                route: list = self.route + [name]
+            self.file_manager.write_var(route, value)
         return super().__setattr__(name, value)
 
 
 class ConfigFileManager:
-    def __init__(self, filePath: str | Path) -> None:
-        self._setFilePath(filePath)
+    def __init__(self, file_path: str | Path) -> None:
+        self._set_file_path(file_path)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(filePath: {self._filePath}, data: {self._data})'
+        return f'{self.__class__.__name__}(file_path: {self._file_path}, data: {self._data})'
 
     def __str__(self) -> str:
         return str(self._data)
@@ -123,45 +143,51 @@ class ConfigFileManager:
         except KeyError:
             result: Any = self._data[str(name)]
             if isinstance(result, dict):
-                result = ConfigDict(result,
-                                    route= [str(name)],
-                                    fileManager= self,)
+                result = ConfigDict(
+                    result,
+                    route= [str(name)],
+                    file_manager= self
+                )
             return result
 
     @property
-    def filePath(self) -> Path:
-        return self._filePath
+    def file_path(self) -> Path:
+        return self._file_path
 
-    @filePath.setter
-    def filePath(self, value: str | Path) -> None:
-        self._setFilePath(value)
+    @file_path.setter
+    def file_path(self, value: str | Path) -> None:
+        self._set_file_path(value)
 
     @property
     def _data(self) -> dict:
         try:
-            with open(self._filePath, 'rb') as f:
+            with open(self._file_path, 'rb') as f:
                 data: dict = tomli.load(f)
         except tomli.TOMLDecodeError:
-            raise tomli.TOMLDecodeError(f'{self._filePath} is not a valid .toml file')
+            msg: str = f'{self._file_path} is not a valid .toml file.'
+            my_logger.error(msg)
+            raise tomli.TOMLDecodeError(msg)
         return data
 
-    def _setFilePath(self, value: str | Path) -> None:
+    def _set_file_path(self, value: str | Path) -> None:
         value = Path(value).with_suffix('.toml')
         if value.is_file():
-            self._filePath: Path = value.resolve()
+            self._file_path: Path = value.resolve()
         else:
-            raise FileExistsError(f'{value} is not a config file')
+            msg: str = f'{value} is not a config file.'
+            my_logger.error(msg)
+            raise FileExistsError(msg)
 
-    def writeFile(self, fileContent: str | dict) -> None:
-        if isinstance(fileContent, str):
-            self._filePath.write_text(fileContent)
-        if isinstance(fileContent, dict):
-            self._filePath.write_text(tomli_w.dumps(fileContent))
+    def write_file(self, file_content: str | dict) -> None:
+        if isinstance(file_content, str):
+            self._file_path.write_text(file_content)
+        if isinstance(file_content, dict):
+            self._file_path.write_text(tomli_w.dumps(file_content))
 
-    def writeVar(self, route: list, value: Any) -> None:
+    def write_var(self, route: list, value: Any) -> None:
         data: dict = self._data
         operator.setitem(reduce(operator.getitem, route[:-1], data), route[-1], value)
-        self.writeFile(data)
+        self.write_file(data)
 
 
 if ppaths[ProjectPathsDict.CONFIG_FILE_PATH] is not None:
@@ -169,5 +195,5 @@ if ppaths[ProjectPathsDict.CONFIG_FILE_PATH] is not None:
         ...
     cfg = ConfigFileManager(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
 else:
-    warnings.warn(f'There is no default config file\n')
+    my_logger.warning(f'There is no default config file.')
     cfg = None

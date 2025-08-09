@@ -1,15 +1,15 @@
 import logging
 
-
 class Styles:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-    DEBUG = '\033[94m'
-    INFO = '\033[0m'
+    DEBUG = '\033[0m'
+    INFO = '\033[94m'
     WARNING = '\033[93m'
     ERROR = '\033[91m'
     CRITICAL = '\033[101m'
+    SUCCEED = '\033[92m'
     PURPLE = '\033[95m'
     BLUE = '\033[94m'
     CYAN = '\033[96m'
@@ -17,38 +17,78 @@ class Styles:
 
 
 class _MyFormatter(logging.Formatter):
+    CUSTOM_STYLE_NAME = 'custom_style'
+
     def format(self, record) -> str:
-        try:
-            customStyle: str = str(record.customStyle)
-        except AttributeError:
-            customStyle = Styles.ENDC
-        arrow: str = '-' * (10-len(record.levelname)) + '>'
-        log_fmt: str = f'{customStyle}{record.levelname} {arrow} %(asctime)s:{Styles.ENDC} {record.msg}'
+        if hasattr(record, self.CUSTOM_STYLE_NAME):
+            custom_style: str = getattr(record, self.CUSTOM_STYLE_NAME)
+        else:
+            custom_style: str = Styles.ENDC
+        arrow: str = '-' * (30 - len(record.levelname + f"[{record.name}]")) + '>'
+        log_fmt: str = f'{custom_style}{record.levelname}[{record.name}] {arrow} %(asctime)s:{Styles.ENDC} {record.msg}'
         formatter = logging.Formatter(log_fmt, datefmt='%d/%m/%Y %H:%M:%S')
         return formatter.format(record)
 
 
-def setLoggingLevel(lvl: int = logging.DEBUG) -> int:
-    _logger: logging.Logger = logging.getLogger(__name__)
-    _logger.setLevel(lvl)
+class MyLogger():
+    def __init__(
+        self,
+        logger_name: str,
+        logging_level: int = logging.DEBUG
+    ) -> None:
+        if logger_name not in logging.Logger.manager.loggerDict.keys():
+            self._logger: logging.Logger = logging.getLogger(logger_name)
+            self.set_logging_level(logging_level)
+            _stream_handler: logging.StreamHandler  = logging.StreamHandler()
+            _stream_handler.setFormatter(_MyFormatter())
+            self._logger.addHandler(_stream_handler)
+        else:
+            self._logger: logging.Logger = logging.getLogger(logger_name)
+            self.set_logging_level(logging_level)
 
-_logger: logging.Logger = logging.getLogger(__name__)
-setLoggingLevel()
-_streamHandler = logging.StreamHandler()
-_streamHandler.setFormatter(_MyFormatter())
-_logger.addHandler(_streamHandler)
+    def set_logging_level(self, lvl: int = logging.DEBUG) -> None:
+        self._logger.setLevel(lvl)
 
-def debugLog(msg: str, style: Styles = Styles.DEBUG) -> None:
-    _logger.debug(f'{msg}', extra= {'customStyle': style})
+    def debug(self, msg: str, style: str = Styles.DEBUG) -> None:
+        self._logger.debug(
+            f'{msg}',
+            extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
+        )
 
-def infoLog(msg: str, style: Styles = Styles.INFO) -> None:
-    _logger.info(f'{msg}', extra= {'customStyle': style})
+    def info(self, msg: str, style: str = Styles.INFO) -> None:
+        self._logger.info(
+            f'{msg}',
+            extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
+        )
 
-def warningLog(msg: str, style: Styles = Styles.WARNING) -> None:
-    _logger.warning(f'{msg}', extra= {'customStyle': style})
+    def warning(self, msg: str, style: str = Styles.WARNING) -> None:
+        self._logger.warning(
+            f'{msg}',
+            extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
+        )
 
-def errorLog(msg: str, style: Styles = Styles.ERROR) -> None:
-    _logger.error(f'{msg}', extra= {'customStyle': style})
+    def error(self, msg: str, style: str = Styles.ERROR) -> None:
+        self._logger.error(
+            f'{msg}',
+            extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
+        )
 
-def criticalLog(msg: str, style: Styles = Styles.CRITICAL) -> None:
-    _logger.critical(f'{msg}', extra= {'customStyle': style})
+    def critical(self, msg: str, style: str = Styles.CRITICAL) -> None:
+        self._logger.critical(
+            f'{msg}',
+            extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
+        )
+
+    @staticmethod
+    def get_lvl_int(lvl_str: str) -> int:
+        lvls: dict[str, int] = {
+            'DEBUG': logging.DEBUG,
+            'INFO': logging.INFO,
+            'WARNING': logging.WARNING,
+            'ERROR': logging.ERROR,
+            'CRITICA': logging.CRITICAL,
+        }
+        try:
+            return lvls[lvl_str.upper()]
+        except KeyError:
+            return logging.DEBUG
