@@ -12,7 +12,7 @@ def setCaplogLvl(caplog: LogCaptureFixture) -> None:
     caplog.clear()
 
 @fixture()
-def myLogger() -> MyLogger:
+def my_logger() -> MyLogger:
     return MyLogger(LOGGER_NAME, logging.DEBUG)
 
 
@@ -20,8 +20,13 @@ class TestLogs:
     @mark.parametrize('msg', [
         'Debug test message',
     ])
-    def test_debug(self, msg: str, caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
-        myLogger.debugLog(msg)
+    def test_debug(
+        self,
+        msg: str,
+        caplog: LogCaptureFixture,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.debug(msg)
         record: logging.LogRecord = caplog.records[0]
         assert record.message == msg
         assert record.levelno == logging.DEBUG
@@ -30,8 +35,13 @@ class TestLogs:
     @mark.parametrize('msg', [
         'Info test message',
     ])
-    def test_info(self, msg: str, caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
-        myLogger.infoLog(msg)
+    def test_info(
+        self,
+        msg: str,
+        caplog: LogCaptureFixture,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.info(msg)
         record: logging.LogRecord = caplog.records[0]
         assert record.message == msg
         assert record.levelno == logging.INFO
@@ -40,8 +50,13 @@ class TestLogs:
     @mark.parametrize('msg', [
         'Warning test message',
     ])
-    def test_warning(self, msg: str, caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
-        myLogger.warningLog(msg)
+    def test_warning(
+        self,
+        msg: str,
+        caplog: LogCaptureFixture,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.warning(msg)
         record: logging.LogRecord = caplog.records[0]
         assert record.message == msg
         assert record.levelno == logging.WARNING
@@ -50,8 +65,13 @@ class TestLogs:
     @mark.parametrize('msg', [
         'Error test message',
     ])
-    def test_error(self, msg: str, caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
-        myLogger.errorLog(msg)
+    def test_error(
+        self,
+        msg: str,
+        caplog: LogCaptureFixture,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.error(msg)
         record: logging.LogRecord = caplog.records[0]
         assert record.message == msg
         assert record.levelno == logging.ERROR
@@ -60,8 +80,13 @@ class TestLogs:
     @mark.parametrize('msg', [
         'Critical test message',
     ])
-    def test_critical(self, msg: str, caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
-        myLogger.criticalLog(msg)
+    def test_critical(
+        self,
+        msg: str,
+        caplog: LogCaptureFixture,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.critical(msg)
         record: logging.LogRecord = caplog.records[0]
         assert record.message == msg
         assert record.levelno == logging.CRITICAL
@@ -74,11 +99,17 @@ class TestLogs:
         (logging.ERROR, 2),
         (logging.CRITICAL, 1),
     ])
-    def test_setLoggingLevel(self, lvl: int, nMessages: int,  caplog: LogCaptureFixture, myLogger: MyLogger) -> None:
-        myLogger.setLoggingLevel(lvl)
-        myLogger.debugLog('Debug test message')
-        myLogger.infoLog('Info test message')
-        myLogger.warningLog('Warning test message')
-        myLogger.errorLog('Error test message')
-        myLogger.criticalLog('Critical test message')
+    def test_set_logging_level(
+        self,
+        lvl: int,
+        nMessages: int, 
+        caplog: LogCaptureFixture,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.set_logging_level(lvl)
+        my_logger.debug('Debug test message')
+        my_logger.info('Info test message')
+        my_logger.warning('Warning test message')
+        my_logger.error('Error test message')
+        my_logger.critical('Critical test message')
         assert len(caplog.records) == nMessages

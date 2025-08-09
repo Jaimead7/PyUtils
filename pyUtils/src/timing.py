@@ -4,17 +4,17 @@ from typing import Any, Callable, Optional, TypeVar, Union, cast, overload
 
 from .logs import MyLogger
 
-myLogger: MyLogger = MyLogger(__name__)
+my_logger: MyLogger = MyLogger(__name__)
 
 F = TypeVar('F', bound= Callable[..., Any])
 
 @overload
-def timeMe(_func: F) -> F: ...
+def time_me(_func: F) -> F: ...
 
 @overload
-def timeMe(*, debug: bool = True) -> Callable[[F], F]: ...
+def time_me(*, debug: bool = True) -> Callable[[F], F]: ...
 
-def timeMe(
+def time_me(
     _func: Optional[F] = None,
     *,
     debug: bool = True
@@ -26,7 +26,7 @@ def timeMe(
             result: Any = func(*args, **kwargs)
             end: float = time.time()
             if debug:
-                myLogger.debugLog(f'"{func.__name__}" execution time: {end - start:.4f}s.')
+                my_logger.debug(f'"{func.__name__}" execution time: {end - start:.4f}s.')
             return result
         return cast(F, wrapper)
     if _func is None:

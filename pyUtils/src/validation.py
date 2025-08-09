@@ -37,7 +37,7 @@ class ValidationClass:
             except FrozenInstanceError:
                 object.__setattr__(self, name, method(getattr(self, name)))
             except ValueError as eMsg:
-                myLogger.errorLog(str(eMsg))
+                myLogger.error(str(eMsg))
         else:
             super().__setattr__(name, value)
 
