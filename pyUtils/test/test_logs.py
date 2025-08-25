@@ -210,3 +210,5 @@ class TestLogs:
         name: str
     ) -> None:
         assert MyLogger.get_lvl_int(name) == lvl
+
+    #TODO: Test file saving logs
