@@ -8,3 +8,5 @@ build
 delete*
 *.whl
 *.tar.gz
+*.log
+*.env
