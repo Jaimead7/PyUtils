@@ -48,6 +48,10 @@ class MyLogger():
             self.set_logging_level(logging_level)
 
     @property
+    def name(self) -> str:
+        return self._logger.name
+
+    @property
     def level(self) -> int:
         return self._logger.level
 

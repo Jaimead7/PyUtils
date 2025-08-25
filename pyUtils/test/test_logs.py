@@ -122,6 +122,19 @@ class TestLogs:
         with raises(AttributeError):
             my_logger.level = lvl  # type: ignore
 
+    def test_get_logging_name(
+        self,
+        my_logger: MyLogger
+    ) -> None:
+        assert my_logger.name == LOGGER_NAME
+
+    def test_set_logging_name_error(
+        self,
+        my_logger: MyLogger
+    ) -> None:
+        with raises(AttributeError):
+            my_logger.name = 'New Name'  # type: ignore
+
     @mark.parametrize('lvl, nMessages', [
         (logging.DEBUG, 5),
         (logging.INFO, 4),
