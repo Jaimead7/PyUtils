@@ -4,7 +4,10 @@ from typing import Any, Callable, Optional, TypeVar, Union, cast, overload
 
 from .logs import MyLogger
 
-my_logger: MyLogger = MyLogger(__name__)
+my_logger: MyLogger = MyLogger(
+    __name__,
+    file_path= 'PyUtils.log'
+)
 
 F = TypeVar('F', bound= Callable[..., Any])
 

@@ -7,7 +7,10 @@ from .logs import MyLogger
 
 #from PyQt5.QtCore import QDateTime, Qt
 
-myLogger = MyLogger(__name__)
+my_logger = MyLogger(
+    __name__,
+    file_path= 'PyUtils.log'
+)
 
 
 class ValidationClass:
@@ -37,7 +40,7 @@ class ValidationClass:
             except FrozenInstanceError:
                 object.__setattr__(self, name, method(getattr(self, name)))
             except ValueError as eMsg:
-                myLogger.error(str(eMsg))
+                my_logger.error(str(eMsg))
         else:
             super().__setattr__(name, value)
 

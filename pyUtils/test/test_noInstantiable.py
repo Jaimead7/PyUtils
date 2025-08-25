@@ -2,7 +2,7 @@ from typing import Literal
 
 from pytest import raises
 
-from ..src.noInstantiable import *
+from ..src.no_instantiable import *
 
 
 class NoInstantiableClass(NoInstantiable):

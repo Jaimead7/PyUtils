@@ -1,3 +1,10 @@
+from .logs import MyLogger
+
+my_logger = MyLogger(
+    __name__,
+    file_path= 'PyUtils.log'
+)
+
 class NoInstantiable:
     """Class that can't be instantiable"""
     def __new__(cls) -> None:

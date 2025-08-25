@@ -13,7 +13,11 @@ from typing_extensions import Self
 
 from .logs import MyLogger
 
-my_logger: MyLogger = MyLogger(__name__)
+my_logger: MyLogger = MyLogger(
+    __name__,
+    file_path= 'PyUtils.log',
+    save_logs= True
+)
 
 
 class ProjectPathsDict(dict):
