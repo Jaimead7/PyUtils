@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 
 class Styles:
@@ -54,6 +55,10 @@ class MyLogger():
     @property
     def level(self) -> int:
         return self._logger.level
+
+    @property
+    def parent(self) -> Optional[logging.Logger]:
+        return self._logger.parent
 
     def set_logging_level(self, lvl: int = logging.DEBUG) -> None:
         self._logger.setLevel(lvl)

@@ -135,6 +135,19 @@ class TestLogs:
         with raises(AttributeError):
             my_logger.name = 'New Name'  # type: ignore
 
+    def test_get_logging_parent(
+        self,
+        my_logger: MyLogger
+    ) -> None:
+        assert isinstance(my_logger.parent, (logging.Logger, type(None)))
+
+    def test_set_logging_parent_error(
+        self,
+        my_logger: MyLogger
+    ) -> None:
+        with raises(AttributeError):
+            my_logger.parent = logging.Logger('Test')  # type: ignore
+
     @mark.parametrize('lvl, nMessages', [
         (logging.DEBUG, 5),
         (logging.INFO, 4),
