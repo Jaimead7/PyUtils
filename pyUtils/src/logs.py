@@ -160,8 +160,6 @@ class MyLogger():
 
     def set_logging_level(self, lvl: int = logging.DEBUG) -> None:
         self._logger.setLevel(lvl)
-        for handler in self._logger.handlers: #CHECK if it is needed
-            handler.setLevel(lvl)
 
     def debug(self, msg: str, style: str = Styles.DEBUG) -> None:
         self._logger.debug(

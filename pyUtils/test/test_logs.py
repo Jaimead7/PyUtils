@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from pytest import LogCaptureFixture, fixture, mark, raises
 
@@ -7,13 +8,18 @@ from ..src.logs import MyLogger
 LOGGER_NAME = 'TestLogger'
 
 @fixture(autouse= True)
-def setCaplogLvl(caplog: LogCaptureFixture) -> None:
+def set_caplog_lvl(caplog: LogCaptureFixture) -> None:
     caplog.set_level(logging.DEBUG)
     caplog.clear()
 
 @fixture()
-def my_logger() -> MyLogger:
-    return MyLogger(LOGGER_NAME, logging.DEBUG)
+def my_logger(tmp_path: Path) -> MyLogger:
+    return MyLogger(
+        LOGGER_NAME,
+        logging.DEBUG,
+        tmp_path,
+        False
+    )
 
 
 class TestLogs:
