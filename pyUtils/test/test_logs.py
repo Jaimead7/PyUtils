@@ -1,6 +1,6 @@
 import logging
 
-from pytest import LogCaptureFixture, fixture, mark
+from pytest import LogCaptureFixture, fixture, mark, raises
 
 from ..src.logs import MyLogger
 
@@ -92,6 +92,36 @@ class TestLogs:
         assert record.levelno == logging.CRITICAL
         assert record.name == LOGGER_NAME
 
+    @mark.parametrize('lvl', [
+        logging.DEBUG,
+        logging.INFO,
+        logging.WARNING,
+        logging.ERROR,
+        logging.CRITICAL
+    ])
+    def test_set_get_logging_lvl(
+        self,
+        lvl: int,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.set_logging_level(lvl)
+        assert my_logger.level == lvl
+
+    @mark.parametrize('lvl', [
+        logging.DEBUG,
+        logging.INFO,
+        logging.WARNING,
+        logging.ERROR,
+        logging.CRITICAL
+    ])
+    def test_set_logging_lvl_prop_error(
+        self,
+        lvl: int,
+        my_logger: MyLogger
+    ) -> None:
+        with raises(AttributeError):
+            my_logger.level = lvl  # type: ignore
+
     @mark.parametrize('lvl, nMessages', [
         (logging.DEBUG, 5),
         (logging.INFO, 4),
@@ -99,7 +129,7 @@ class TestLogs:
         (logging.ERROR, 2),
         (logging.CRITICAL, 1),
     ])
-    def test_set_logging_level(
+    def test_logging_level_messages(
         self,
         lvl: int,
         nMessages: int, 

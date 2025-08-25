@@ -1,5 +1,6 @@
 import logging
 
+
 class Styles:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
@@ -34,7 +35,7 @@ class MyLogger():
     def __init__(
         self,
         logger_name: str,
-        logging_level: int = logging.DEBUG
+        logging_level: int = logging.DEBUG,
     ) -> None:
         if logger_name not in logging.Logger.manager.loggerDict.keys():
             self._logger: logging.Logger = logging.getLogger(logger_name)
@@ -45,6 +46,10 @@ class MyLogger():
         else:
             self._logger: logging.Logger = logging.getLogger(logger_name)
             self.set_logging_level(logging_level)
+
+    @property
+    def level(self) -> int:
+        return self._logger.level
 
     def set_logging_level(self, lvl: int = logging.DEBUG) -> None:
         self._logger.setLevel(lvl)
