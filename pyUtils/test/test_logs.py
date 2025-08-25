@@ -99,13 +99,29 @@ class TestLogs:
         logging.ERROR,
         logging.CRITICAL
     ])
-    def test_set_get_logging_lvl(
+    def test_get_logging_lvl(
         self,
         lvl: int,
         my_logger: MyLogger
     ) -> None:
         my_logger.set_logging_level(lvl)
         assert my_logger.level == lvl
+
+    @mark.parametrize('lvl, name', [
+        (logging.DEBUG, 'DEBUG'),
+        (logging.INFO, 'INFO'),
+        (logging.WARNING, 'WARNING'),
+        (logging.ERROR, 'ERROR'),
+        (logging.CRITICAL, 'CRITICAL')
+    ])
+    def test_get_logging_lvl_name(
+        self,
+        lvl: int,
+        name: str,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.set_logging_level(lvl)
+        assert my_logger.level_str == name
 
     @mark.parametrize('lvl', [
         logging.DEBUG,
@@ -121,6 +137,8 @@ class TestLogs:
     ) -> None:
         with raises(AttributeError):
             my_logger.level = lvl  # type: ignore
+        with raises(AttributeError):
+            my_logger.level_str = 'DEBUG'  # type: ignore
 
     def test_get_logging_name(
         self,
@@ -169,3 +187,20 @@ class TestLogs:
         my_logger.error('Error test message')
         my_logger.critical('Critical test message')
         assert len(caplog.records) == nMessages
+
+    @mark.parametrize('lvl, name', [
+        (logging.DEBUG, 'DEBUG'),
+        (logging.DEBUG, 'debug'),
+        (logging.DEBUG, 'DEbuG'),
+        (logging.INFO, 'INFO'),
+        (logging.WARNING, 'WARNING'),
+        (logging.ERROR, 'ERROR'),
+        (logging.CRITICAL, 'CRITICAL'),
+        (logging.DEBUG, 'NOLEVEL')
+    ])
+    def test_get_lvl_int(
+        self,
+        lvl: int,
+        name: str
+    ) -> None:
+        assert MyLogger.get_lvl_int(name) == lvl

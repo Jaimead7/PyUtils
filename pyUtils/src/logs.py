@@ -33,6 +33,17 @@ class _MyFormatter(logging.Formatter):
 
 
 class MyLogger():
+    _lvls_mapping: dict[str, int] = {
+        'NOTSET': logging.NOTSET,
+        'DEBUG': logging.DEBUG,
+        'INFO': logging.INFO,
+        'WARNING': logging.WARNING,
+        'WARN': logging.WARN,
+        'ERROR': logging.ERROR,
+        'CRITICAL': logging.CRITICAL,
+        'FATAL': logging.FATAL,
+    }
+    
     def __init__(
         self,
         logger_name: str,
@@ -59,6 +70,10 @@ class MyLogger():
     @property
     def parent(self) -> Optional[logging.Logger]:
         return self._logger.parent
+
+    @property
+    def level_str(self) -> str:
+        return logging.getLevelName(self.level)
 
     def set_logging_level(self, lvl: int = logging.DEBUG) -> None:
         self._logger.setLevel(lvl)
@@ -93,16 +108,11 @@ class MyLogger():
             extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
         )
 
-    @staticmethod
-    def get_lvl_int(lvl_str: str) -> int:
-        lvls: dict[str, int] = {
-            'DEBUG': logging.DEBUG,
-            'INFO': logging.INFO,
-            'WARNING': logging.WARNING,
-            'ERROR': logging.ERROR,
-            'CRITICA': logging.CRITICAL,
-        }
+    # For compatibility with python < 3.11.
+    # Equivalent to logging.getLevelNamesMapping()[lvl_str.upper()] in python >= 3.11.
+    @classmethod
+    def get_lvl_int(cls, lvl_str: str) -> int:
         try:
-            return lvls[lvl_str.upper()]
+            return cls._lvls_mapping[lvl_str.upper()]
         except KeyError:
             return logging.DEBUG
