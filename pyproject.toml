@@ -45,8 +45,6 @@
     [tool.setuptools]
         [tool.setuptools.packages]
         find = {}
-        [tool.setuptools.package-data]
-            pyUtils = ["dist/config/*.toml"]
     [tool.pytest.ini_options]
         python_files = "test_*.py"
         addopts = "--verbose"
