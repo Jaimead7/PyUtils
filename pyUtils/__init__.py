@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from .src.config import ConfigDict, ConfigFileManager, ProjectPathsDict, cfg
@@ -25,6 +26,10 @@ def set_pyutils_logs_path(new_path: Path | str) -> None:
 def save_pyutils_logs(value: bool) -> None:
     for logger in loggers:
         logger.save_logs = value
+
+def set_pyutils_logging_level(lvl: int = logging.DEBUG) -> None:
+    for logger in loggers:
+        logger.set_logging_level(lvl)
 
 MyLogger(
     __name__,
