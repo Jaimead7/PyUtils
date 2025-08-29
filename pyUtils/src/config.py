@@ -15,8 +15,7 @@ from .logs import MyLogger
 
 my_logger: MyLogger = MyLogger(
     __name__,
-    file_path= 'PyUtils.log',
-    save_logs= True
+    file_path= 'PyUtils.log'
 )
 
 
