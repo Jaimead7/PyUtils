@@ -8,4 +8,6 @@ my_logger = MyLogger(
 class NoInstantiable:
     """Class that can't be instantiable"""
     def __new__(cls) -> None:
-        raise SyntaxError(f'Class "{cls.__name__}" is not instantiable')
+        msg: str = f'Class "{cls.__name__}" is not instantiable.'
+        my_logger.critical(msg)
+        raise SyntaxError(msg)

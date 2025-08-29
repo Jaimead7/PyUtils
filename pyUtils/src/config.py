@@ -39,7 +39,7 @@ class ProjectPathsDict(dict):
         my_logger.warning(f'"{value}" path does not exists.')
         return super().__setitem__(key, None)
 
-    def set_app_path(self, new_app_path: str | Path | None) -> Self:
+    def set_app_path(self, new_app_path: Optional[str | Path]) -> Self:
         if new_app_path is None:
             self[self.APP_PATH] = None
             self[self.DIST_PATH] = None
@@ -71,10 +71,6 @@ class ProjectPathsDict(dict):
                 return Path(inspect.stack()[-1].filename).parents[1]  #CHECK
             except IndexError:
                 return None
-
-
-ppaths: ProjectPathsDict = ProjectPathsDict() \
-    .set_app_path(ProjectPathsDict.get_exec_folder())
 
 
 class ConfigDict(dict):
@@ -192,12 +188,3 @@ class ConfigFileManager:
         data: dict = self._data
         operator.setitem(reduce(operator.getitem, route[:-1], data), route[-1], value)
         self.write_file(data)
-
-
-if ppaths[ProjectPathsDict.CONFIG_FILE_PATH] is not None:
-    with open(ppaths[ProjectPathsDict.CONFIG_FILE_PATH], 'a'):
-        ...
-    cfg = ConfigFileManager(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
-else:
-    my_logger.warning(f'There is no default config file.')
-    cfg = None

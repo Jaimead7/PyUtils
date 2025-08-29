@@ -106,6 +106,7 @@ class MyLogger():
         else:
             self._remove_file_handler()
         self._save_logs: bool = value
+        self.debug(f'Log saving state: {self.save_logs}')
 
     @property
     def logs_file_path(self) -> Path:
@@ -118,7 +119,7 @@ class MyLogger():
             new_path = Path(new_path)
         self._create_file_handler(new_path)
         self.save_logs = self.save_logs
-            
+        self.debug(f'Log file path: {self.logs_file_path}')
 
     def _create_file_path(self, file_path: Optional[Path] = None) -> None:
         self._file_path: Path

@@ -4,7 +4,7 @@
 
 [project]
     name = "jaimead7-pyutils"
-    version = "0.1.1"
+    version = "0.1.2"
     description = "Different utilities for general purpose usage on python projects."
     authors = [
         {name = "Jaimead7", email = "alvarez.diaz.jaime1@gmail.com"},

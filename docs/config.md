@@ -1,20 +1,20 @@
 ### Config file
 #### ProjectPathsDict
-Dict with validation for paths. On error <code>path = None</code>.  
-<code>ppath</code> is an instance of <code>ProjectPathsDict</code> containing default paths.  
-Default <code>APP_PATH</code> is <code>../\<main>.py</code> when executed <code>py \<main>.py</code>. When executed from <code>prg.exe</code> is <code>../\<prg>.exe</code>  
-Default <code>DIST_PATH</code> is <code>APP_PATH/dist</code>  
-Default <code>CONFIG_PATH</code> is <code>APP_PATH/dist/config</code>  
-Default <code>CONFIG_FILE_PATH</code> is <code>APP_PATH/dist/config/config.toml</code>  
+Dict with validation for paths. On error ```path = None```.  
+Default paths can be setted by a main ```APP_PATH```:  
+- ```DIST_PATH``` is ```APP_PATH/dist```  
+- ```CONFIG_PATH``` is ```APP_PATH/dist/config```  
+- ```CONFIG_FILE_PATH``` is ```APP_PATH/dist/config/config.toml```  
+
+To set the ```APP_PATH``` use ```ProjectPathsDict.set_app_path()```.  
+```ProjectPathsDict.get_exec_folder()``` provides the parent of the executed ```script``` or ```exe```.  
 
 #### ConfigFileManager
-Class to manage <code>.toml</code> files  
-<code>cfg</code> is an instance of <code>ConfigFileManager</code> for <code>APP_PATH/dist/config/config.toml</code>  
-On error <code>cfg = None</code>
+Class to manage ```.toml``` files.  
 
 #### ConfigDict
-Class to access <code>dict</code> objects values with doted notation.
-Used by a ConfigFileManager to access data.
+Class to access <code>dict</code> objects values with doted notation.  
+Used by a [ConfigFileManager](#configfilemanager) to access data.
 
 #### Example
 Project structure
@@ -39,8 +39,11 @@ config.toml
 ```
 main.py
 ```python
-from .src.config import ConfigDict, ConfigFileManager, ProjectPathsDict, cfg, ppaths
+from .src.config import ConfigDict, ConfigFileManager, ProjectPathsDict, cfg
 
+ppaths: ProjectPathsDict = ProjectPathsDict() \
+    .set_app_path(ProjectPathsDict.get_exec_folder().parent[2]
+cfg = ConfigFileManager(ppaths[ProjectPathsDict.CONFIG_FILE_PATH])
 
 print(ppaths[ProjectPathsDict.APP_PATH])
 print(ppaths[ProjectPathsDict.DIST_PATH])

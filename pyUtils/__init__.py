@@ -1,9 +1,8 @@
 import logging
 from pathlib import Path
 
-from .src.config import ConfigDict, ConfigFileManager, ProjectPathsDict, cfg
+from .src.config import ConfigDict, ConfigFileManager, ProjectPathsDict
 from .src.config import my_logger as config_logger
-from .src.config import ppaths
 from .src.logs import MyLogger, Styles
 from .src.no_instantiable import NoInstantiable
 from .src.no_instantiable import my_logger as no_instantiable_logger
