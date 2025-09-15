@@ -3,6 +3,7 @@ __pycache__
 .pytest_cache
 build
 *.egg-info
+*venv
 
 # FILES
 delete*

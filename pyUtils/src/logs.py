@@ -46,6 +46,8 @@ class _MyFileFormatter(logging.Formatter):
 
 
 class MyLogger():
+    PATH_ENV_NAME: str = 'LOGS_PATH'
+    
     _lvls_mapping: dict[str, int] = {
         'NOTSET': logging.NOTSET,
         'DEBUG': logging.DEBUG,
@@ -64,6 +66,7 @@ class MyLogger():
         file_path: Optional[Path | str] = None,
         save_logs: bool = False
     ) -> None:
+        self._file_handler: Optional[logging.FileHandler] = None
         if logger_name not in logging.Logger.manager.loggerDict.keys():
             self._logger: logging.Logger = logging.getLogger(logger_name)
             self.set_logging_level(logging_level)
@@ -73,10 +76,7 @@ class MyLogger():
         else:
             self._logger: logging.Logger = logging.getLogger(logger_name)
             self.set_logging_level(logging_level)
-        if file_path is not None:
-            file_path = Path(file_path)
-        self._save_logs = False
-        self._create_file_handler(file_path)
+        self.logs_file_path = file_path
         self.save_logs = save_logs
 
     @property
@@ -109,11 +109,11 @@ class MyLogger():
         self.debug(f'Log saving state: {self.save_logs}')
 
     @property
-    def logs_file_path(self) -> Path:
+    def logs_file_path(self) -> Optional[Path]:
         return self._file_path
 
     @logs_file_path.setter
-    def logs_file_path(self, new_path: Path | str) -> None:
+    def logs_file_path(self, new_path: Optional[Path | str]) -> None:
         self._remove_file_handler()
         if new_path is not None:
             new_path = Path(new_path)
@@ -122,29 +122,31 @@ class MyLogger():
         self.debug(f'Log file path: {self.logs_file_path}')
 
     def _create_file_path(self, file_path: Optional[Path] = None) -> None:
-        self._file_path: Path
-        if file_path is None or file_path.suffix != '.log':
-            relative_path: Path = Path(f'{self.name}.log')
-        else:
-            if file_path.is_absolute():
-                self._file_path = file_path
-                return
-            relative_path = file_path
+        self._file_path: Optional[Path] = None
+        if file_path is None:
+            return
+        if file_path.suffix != '.log':
+            file_path = file_path.with_suffix('.log')
+        if file_path.is_absolute():
+            self._file_path = file_path
+            return
         system: str = platform.system().lower()
         temp_path: str
         if system == 'windows':
             temp_path = getenv('TEMP', getenv('TMP', '.'))
         else:
             temp_path = '/tmp'
-        self._file_path= Path(getenv('LOGS_PATH', temp_path)) / relative_path
+        self._file_path= Path(getenv(self.PATH_ENV_NAME, temp_path)) / file_path
 
     def _create_file_handler(self, file_path: Optional[Path] = None) -> None:
         self._create_file_path(file_path)
+        if self._file_path is None:
+            return
         if not self._file_path.parent.is_dir():
             self._file_path.parent.mkdir(parents= True)
             self._logger.debug(f'Created logs dir "{self._file_path}".')
         self._file_handler = logging.FileHandler(
-            self.logs_file_path,
+            self._file_path,
             mode= 'a',
             encoding= 'UTF-8'
         )
@@ -152,6 +154,8 @@ class MyLogger():
         self._file_handler.setLevel(self._logger.level)
 
     def _add_file_handler(self) -> None:
+        if self._file_handler is None:
+            return
         if self._file_handler not in self._logger.handlers:
             self._logger.addHandler(self._file_handler)
 
@@ -200,3 +204,7 @@ class MyLogger():
             return cls._lvls_mapping[lvl_str.upper()]
         except KeyError:
             return logging.DEBUG
+
+my_logger = MyLogger(
+    logger_name= 'PyUtils'
+)
