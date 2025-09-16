@@ -24,22 +24,24 @@ class Styles:
 class _MyFormatter(logging.Formatter):
     CUSTOM_STYLE_NAME = 'custom_style'
 
-    def format(self, record) -> str:
+    def format(self, record: logging.LogRecord) -> str:
+        org_msg: str = record.msg
+        record.msg = record.msg.replace('%', '%%')
         if hasattr(record, self.CUSTOM_STYLE_NAME):
             custom_style: str = getattr(record, self.CUSTOM_STYLE_NAME)
         else:
             custom_style: str = Styles.ENDC
-        arrow: str = '-' * (40 - len(record.levelname + f"[{record.name}]")) + '>'
+        arrow: str = '-' * (39 - len(record.levelname + f"[{record.name}]")) + '->'
         log_fmt: str = f'{custom_style}{record.levelname}[{record.name}] {arrow} %(asctime)s:{Styles.ENDC} {record.msg}'
         formatter = logging.Formatter(log_fmt, datefmt='%d/%m/%Y %H:%M:%S')
-        return formatter.format(record)
+        result: str = formatter.format(record)
+        record.msg = org_msg
+        return result
 
 
 class _MyFileFormatter(logging.Formatter):
-    CUSTOM_STYLE_NAME = 'custom_style'
-
-    def format(self, record) -> str:
-        arrow: str = '-' * (40 - len(record.levelname + f"[{record.name}]")) + '>'
+    def format(self, record: logging.LogRecord) -> str:
+        arrow: str = '-' * (39 - len(record.levelname + f"[{record.name}]")) + '->'
         log_fmt: str = f'{record.levelname}[{record.name}] {arrow} %(asctime)s: {record.msg}'
         formatter = logging.Formatter(log_fmt, datefmt='%d/%m/%Y %H:%M:%S')
         return formatter.format(record)
@@ -67,15 +69,10 @@ class MyLogger():
         save_logs: bool = False
     ) -> None:
         self._file_handler: Optional[logging.FileHandler] = None
-        if logger_name not in logging.Logger.manager.loggerDict.keys():
-            self._logger: logging.Logger = logging.getLogger(logger_name)
-            self.set_logging_level(logging_level)
-            stream_handler: logging.StreamHandler  = logging.StreamHandler()
-            stream_handler.setFormatter(_MyFormatter())
-            self._logger.addHandler(stream_handler)
-        else:
-            self._logger: logging.Logger = logging.getLogger(logger_name)
-            self.set_logging_level(logging_level)
+        self._save_logs: bool = False
+        self._logger: logging.Logger = logging.getLogger(logger_name)
+        self.set_logging_level(logging_level)
+        self._create_stream_handler()
         self.logs_file_path = file_path
         self.save_logs = save_logs
 
@@ -105,7 +102,7 @@ class MyLogger():
             self._add_file_handler()
         else:
             self._remove_file_handler()
-        self._save_logs: bool = value
+        self._save_logs = value
         self.debug(f'Log saving state: {self.save_logs}')
 
     @property
@@ -162,6 +159,14 @@ class MyLogger():
     def _remove_file_handler(self) -> None:
         if self._file_handler in self._logger.handlers:
             self._logger.removeHandler(self._file_handler)
+
+    def _create_stream_handler(self) -> None:
+        for handler in self._logger.handlers:
+            if isinstance(handler, logging.StreamHandler):
+                self._logger.removeHandler(handler)
+        self._stream_handler: logging.StreamHandler = logging.StreamHandler()
+        self._stream_handler.setFormatter(_MyFormatter())
+        self._logger.addHandler(self._stream_handler)
 
     def set_logging_level(self, lvl: int = logging.DEBUG) -> None:
         self._logger.setLevel(lvl)

@@ -11,12 +11,7 @@ import tomli
 import tomli_w
 from typing_extensions import Self
 
-from .logs import MyLogger
-
-my_logger: MyLogger = MyLogger(
-    __name__,
-    file_path= 'PyUtils.log'
-)
+from .logs import my_logger
 
 
 class ProjectPathsDict(dict):

@@ -1,7 +1,8 @@
 import logging
 from pathlib import Path
 
-from pytest import LogCaptureFixture, fixture, mark, raises
+from _pytest.capture import CaptureResult
+from pytest import CaptureFixture, LogCaptureFixture, fixture, mark, raises
 
 from ..src.logs import MyLogger
 
@@ -97,6 +98,38 @@ class TestLogs:
         assert record.message == msg
         assert record.levelno == logging.CRITICAL
         assert record.name == LOGGER_NAME
+
+    @mark.parametrize('msg', [
+        'Message with %char',
+        'Message with \\char',
+        'Message with *char',
+        'Message with $char',
+        'Message with &char',
+    ])
+    def test_special_characters(
+        self,
+        msg: str,
+        caplog: LogCaptureFixture,
+        my_logger: MyLogger
+    ) -> None:
+        my_logger.debug(msg)
+        record: logging.LogRecord = caplog.records[0]
+        assert record.message == msg
+        assert record.levelno == logging.DEBUG
+        assert record.name == LOGGER_NAME
+
+    def test_double_logger(
+        self,
+        capsys: CaptureFixture,
+    ) -> None:
+        logger_one = MyLogger('Test')
+        logger_two = MyLogger('Test')
+        capsys.readouterr()
+        logger_one.debug('msg one')
+        logger_two.debug('msg two')
+        records: CaptureResult[str] = capsys.readouterr()
+        str(records.err).count('\n')
+        assert str(records.err).count('\n') == 2
 
     @mark.parametrize('lvl', [
         logging.DEBUG,

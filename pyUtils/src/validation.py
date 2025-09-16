@@ -3,14 +3,9 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Iterable, Optional
 
-from .logs import MyLogger
+from .logs import my_logger
 
 #from PyQt5.QtCore import QDateTime, Qt
-
-my_logger = MyLogger(
-    __name__,
-    file_path= 'PyUtils.log'
-)
 
 
 class ValidationClass:

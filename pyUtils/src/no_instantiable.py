@@ -1,9 +1,5 @@
-from .logs import MyLogger
+from .logs import my_logger
 
-my_logger = MyLogger(
-    __name__,
-    file_path= 'PyUtils.log'
-)
 
 class NoInstantiable:
     """Class that can't be instantiable"""

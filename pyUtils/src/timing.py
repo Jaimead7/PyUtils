@@ -2,12 +2,7 @@ import time
 from functools import wraps
 from typing import Any, Callable, Optional, TypeVar, Union, cast, overload
 
-from .logs import MyLogger
-
-my_logger: MyLogger = MyLogger(
-    __name__,
-    file_path= 'PyUtils.log'
-)
+from .logs import my_logger
 
 F = TypeVar('F', bound= Callable[..., Any])
 
