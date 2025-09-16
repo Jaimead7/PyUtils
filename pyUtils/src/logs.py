@@ -66,8 +66,10 @@ class MyLogger():
         logger_name: str,
         logging_level: int = logging.DEBUG,
         file_path: Optional[Path | str] = None,
-        save_logs: bool = False
+        save_logs: bool = False,
+        enable: bool = True
     ) -> None:
+        self.enable: bool = False
         self._file_handler: Optional[logging.FileHandler] = None
         self._save_logs: bool = False
         self._logger: logging.Logger = logging.getLogger(logger_name)
@@ -75,6 +77,7 @@ class MyLogger():
         self._create_stream_handler()
         self.logs_file_path = file_path
         self.save_logs = save_logs
+        self.enable = enable
 
     @property
     def name(self) -> str:
@@ -172,30 +175,40 @@ class MyLogger():
         self._logger.setLevel(lvl)
 
     def debug(self, msg: str, style: str = Styles.DEBUG) -> None:
+        if not self.enable:
+            return
         self._logger.debug(
             f'{msg}',
             extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
         )
 
     def info(self, msg: str, style: str = Styles.INFO) -> None:
+        if not self.enable:
+            return
         self._logger.info(
             f'{msg}',
             extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
         )
 
     def warning(self, msg: str, style: str = Styles.WARNING) -> None:
+        if not self.enable:
+            return
         self._logger.warning(
             f'{msg}',
             extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
         )
 
     def error(self, msg: str, style: str = Styles.ERROR) -> None:
+        if not self.enable:
+            return
         self._logger.error(
             f'{msg}',
             extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
         )
 
     def critical(self, msg: str, style: str = Styles.CRITICAL) -> None:
+        if not self.enable:
+            return
         self._logger.critical(
             f'{msg}',
             extra= {_MyFormatter.CUSTOM_STYLE_NAME: style}
