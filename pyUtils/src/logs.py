@@ -47,7 +47,7 @@ class _MyFileFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-class MyLogger():
+class MyLogger:
     PATH_ENV_NAME: str = 'LOGS_PATH'
     
     _lvls_mapping: dict[str, int] = {
@@ -222,6 +222,15 @@ class MyLogger():
             return cls._lvls_mapping[lvl_str.upper()]
         except KeyError:
             return logging.DEBUG
+
+    @classmethod
+    def get_logging_lvl_from_env(cls, env_var_name: str) -> int:
+        env_var: str | int = getenv(env_var_name, logging.DEBUG)
+        try:
+            return int(env_var)
+        except ValueError:
+            return cls.get_lvl_int(str(env_var))
+
 
 my_logger = MyLogger(
     logger_name= 'PyUtils'
