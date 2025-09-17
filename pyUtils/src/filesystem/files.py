@@ -149,7 +149,7 @@ def my_file_validator_factory(
         ...
         return True
 
-    TomlFileFactory: Type[MyFileValidator] = my_file_validator_factory(
+    TomlFileFactory: type[MyFileValidator] = my_file_validator_factory(
         'TomlFile',
         r'toml$',
         validate_content_func= validate_toml

@@ -91,3 +91,20 @@ class TestMyFileValidator:
     ) -> None:
         for path, _, validator in test_files:
             assert validator.validate(path)
+
+    @staticmethod
+    def test_class_factory() -> None:
+        CustomClassPattern: type[MyFileValidator] = my_file_validator_factory(
+            class_name= 'CustomClassPattern',
+            name_pattern= r'\.txt$',
+        )
+        CustomClassExtension: type[MyFileValidator] = my_file_validator_factory(
+            class_name= 'CustomClassExtension',
+            valid_extensions= ['.png'],
+        )
+        assert issubclass(CustomClassPattern, MyFileValidator)
+        assert CustomClassPattern.validate('test.txt', exists= False)
+        assert not CustomClassPattern.validate('test.png', exists= False)
+        assert not CustomClassPattern.validate('test.xt', exists= False)
+        assert CustomClassExtension.validate('test.png', exists= False)
+        assert not CustomClassExtension.validate('test.xt', exists= False)
