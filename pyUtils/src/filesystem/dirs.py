@@ -18,6 +18,7 @@ class MyDirValidator:
 
     def __init__(self, path: str | Path) -> None:
         self.path = path
+        self._required_files: list[Path] = []
 
     @property
     def path(self) -> Path:
@@ -68,7 +69,7 @@ class MyDirValidator:
         if len(self.REQUIRED_FILES) == 0:
             return True
         files_check: list[bool] = []
-        self._required_files: list[Path] = []
+        self._required_files = []
         for file_validator in self.REQUIRED_FILES:
             result: bool
             path: Optional[Path]
@@ -111,7 +112,7 @@ class MyDirValidator:
         return False
 
     def required_dirs_check(self) -> bool:
-        if len(self.REQUIRED_DIRS):
+        if len(self.REQUIRED_DIRS) == 0:
             return True
         dirs_check: list[bool] = [False for _ in self.REQUIRED_DIRS]
         for dir in self.sub_dirs:

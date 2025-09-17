@@ -157,6 +157,7 @@ class MyLogger:
         if self._file_handler is None:
             return
         if self._file_handler not in self._logger.handlers:
+            self._file_handler.setLevel(self._logger.level)
             self._logger.addHandler(self._file_handler)
 
     def _remove_file_handler(self) -> None:
@@ -169,10 +170,13 @@ class MyLogger:
                 self._logger.removeHandler(handler)
         self._stream_handler: logging.StreamHandler = logging.StreamHandler()
         self._stream_handler.setFormatter(_MyFormatter())
+        self._stream_handler.setLevel(self._logger.level)
         self._logger.addHandler(self._stream_handler)
 
     def set_logging_level(self, lvl: int = logging.DEBUG) -> None:
         self._logger.setLevel(lvl)
+        for handler in self._logger.handlers:
+            handler.setLevel(lvl)
 
     def debug(self, msg: str, style: str = Styles.DEBUG) -> None:
         if not self.enable:
