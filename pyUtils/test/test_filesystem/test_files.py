@@ -66,7 +66,8 @@ class NameValidator(MyFileValidator):
 
 
 class TestMyFileValidator:
-    def test_instance(self) -> None:
+    @staticmethod
+    def test_instance() -> None:
         with raises(SyntaxError):
             _ = MyFileValidator()
 
@@ -108,3 +109,21 @@ class TestMyFileValidator:
         assert not CustomClassPattern.validate('test.xt', exists= False)
         assert CustomClassExtension.validate('test.png', exists= False)
         assert not CustomClassExtension.validate('test.xt', exists= False)
+
+
+class TestFunctions:
+    @staticmethod
+    def test_copy(
+        test_files: list[tuple[Path, str, type[MyFileValidator]]],
+        tmp_path: Path
+    ) -> None:
+        new_dir: Path = tmp_path / 'new'
+        new_dir.mkdir(exist_ok= True)
+        copy_files(
+            [file for file, _, _ in test_files],
+            destiny_dir= new_dir
+        )
+        base_dir_files: list[str] = [f.name for f in tmp_path.iterdir() if f.is_file()]
+        new_dir_files: list[str] = [f.name for f in new_dir.iterdir() if f.is_file()]
+        for file in base_dir_files:
+            assert file in new_dir_files
