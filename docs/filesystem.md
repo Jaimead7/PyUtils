@@ -7,11 +7,11 @@ from pyUtils import *
 
 
 class DataYamlFile(YamlFileValidator):
-    NAME_PATTERN = r'^data.yaml$'
+    NAME_PATTERN = r'^data\.yaml$'
 
 
 class MetadataYamlFile(YamlFileValidator):
-    NAME_PATTERN = r'^metadata.yaml$'
+    NAME_PATTERN = r'^metadata\.yaml$'
 
 
 class ImageDir(MyDirValidator):

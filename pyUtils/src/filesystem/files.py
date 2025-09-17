@@ -73,7 +73,8 @@ class MyFileValidator(NoInstantiable):
 
 class YamlFileValidator(MyFileValidator):
     VALID_EXTENSIONS: Optional[list[str]] = [
-        '.yaml'
+        '.yaml',
+        '.yml'
     ]
 
     @staticmethod
@@ -90,7 +91,9 @@ class YamlFileValidator(MyFileValidator):
 
 
 class TomlFileValidator(MyFileValidator):
-    NAME_PATTERN = r'\.toml$'
+    VALID_EXTENSIONS: Optional[list[str]] = [
+        '.toml'
+    ]
 
     @staticmethod
     def validate_content(path: str | Path) -> bool:
