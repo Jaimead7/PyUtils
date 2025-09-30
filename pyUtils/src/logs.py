@@ -239,3 +239,12 @@ class MyLogger:
 my_logger = MyLogger(
     logger_name= 'PyUtils'
 )
+
+def set_pyutils_logs_path(new_path: Path | str) -> None:
+    my_logger.logs_file_path = new_path
+
+def save_pyutils_logs(value: bool) -> None:
+    my_logger.save_logs = value
+
+def set_pyutils_logging_level(lvl: int = logging.DEBUG) -> None:
+    my_logger.set_logging_level(lvl)
