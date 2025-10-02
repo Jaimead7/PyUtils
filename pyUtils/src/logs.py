@@ -32,7 +32,7 @@ class _MyFormatter(logging.Formatter):
         else:
             custom_style: str = Styles.ENDC
         arrow: str = '-' * (39 - len(record.levelname + f"[{record.name}]")) + '->'
-        log_fmt: str = f'{custom_style}{record.levelname}[{record.name}] {arrow} %(asctime)s:{Styles.ENDC} {record.msg}'
+        log_fmt: str = f'{custom_style}{record.levelname}[{record.name}] {arrow} %(asctime)s.%(msecs)03d:{Styles.ENDC} {record.msg}'
         formatter = logging.Formatter(log_fmt, datefmt='%d/%m/%Y %H:%M:%S')
         result: str = formatter.format(record)
         record.msg = org_msg
@@ -42,7 +42,7 @@ class _MyFormatter(logging.Formatter):
 class _MyFileFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         arrow: str = '-' * (39 - len(record.levelname + f"[{record.name}]")) + '->'
-        log_fmt: str = f'{record.levelname}[{record.name}] {arrow} %(asctime)s: {record.msg}'
+        log_fmt: str = f'{record.levelname}[{record.name}] {arrow} %(asctime)s.%(msecs)03d: {record.msg}'
         formatter = logging.Formatter(log_fmt, datefmt='%d/%m/%Y %H:%M:%S')
         return formatter.format(record)
 
